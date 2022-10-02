@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Shipmate\Shipmate\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class ShipmateCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-shipmate';
 
     public $description = 'My command';
 
