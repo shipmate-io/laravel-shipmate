@@ -2,9 +2,9 @@
 
 namespace Shipmate\Shipmate;
 
+use Shipmate\Shipmate\Commands\ShipmateCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Shipmate\Shipmate\Commands\ShipmateCommand;
 
 class ShipmateServiceProvider extends PackageServiceProvider
 {
