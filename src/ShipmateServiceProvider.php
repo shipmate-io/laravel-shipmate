@@ -2,9 +2,10 @@
 
 namespace Shipmate\Shipmate;
 
+use Shipmate\Shipmate\Commands\ShipmateCommand;
+use Shipmate\Shipmate\StorageBucket\StorageBucketServiceProvider;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Shipmate\Shipmate\Commands\ShipmateCommand;
 
 class ShipmateServiceProvider extends PackageServiceProvider
 {
@@ -21,5 +22,10 @@ class ShipmateServiceProvider extends PackageServiceProvider
             ->hasViews()
             ->hasMigration('create_laravel-shipmate_table')
             ->hasCommand(ShipmateCommand::class);
+    }
+
+    public function packageBooted(): void
+    {
+        StorageBucketServiceProvider::new()->boot();
     }
 }
