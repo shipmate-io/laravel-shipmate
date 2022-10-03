@@ -9,9 +9,9 @@ class ShipmateConfig
     ) {
     }
 
-    public static function new(array $config): static
+    public static function new(): static
     {
-        return new static($config);
+        return app(static::class);
     }
 
     /**
@@ -33,7 +33,7 @@ class ShipmateConfig
     /**
      * The service account key used to authenticate with Shipmate.
      */
-    public function getKey(): string
+    public function getKey(): array
     {
         $key = $this->config['key'] ?? env('SHIPMATE_KEY');
 
@@ -43,7 +43,15 @@ class ShipmateConfig
             );
         }
 
-        return json_decode(base64_decode($key), true);
+        $decodedKey = json_decode(base64_decode($key), true);
+
+        if(!is_array($decodedKey)) {
+            throw new ShipmateException(
+                'The value specified for the `key` parameter in the `config/shipmate.php` file is not a valid key.'
+            );
+        }
+
+        return $decodedKey;
     }
 
     /**

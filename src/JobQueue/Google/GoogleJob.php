@@ -10,7 +10,7 @@ use Google\Protobuf\Timestamp;
 class GoogleJob
 {
     public function __construct(
-        private GoogleClient $api,
+        private GoogleClient $googleClient,
         private string $queueName,
         private Task $task,
     ) {
@@ -24,7 +24,7 @@ class GoogleJob
             return null;
         }
 
-        $retryConfig = $this->api->getQueue($this->queueName)->getRetryConfig();
+        $retryConfig = $this->googleClient->getQueue($this->queueName)->getRetryConfig();
 
         $maxRetryDuration = $retryConfig->getMaxRetryDuration();
         $dispatchTime = $attempt->getDispatchTime();

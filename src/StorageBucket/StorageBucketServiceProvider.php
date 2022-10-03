@@ -20,7 +20,7 @@ class StorageBucketServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Storage::extend('shipmate', function ($app, $config) {
-            $shipmateConfig = ShipmateConfig::new($app['config']->get('shipmate'));
+            $shipmateConfig = ShipmateConfig::new();
             $storageBucketConfig = StorageBucketConfig::new($config);
 
             $flysystemConfig = $this->constructFlysystemConfig($storageBucketConfig);

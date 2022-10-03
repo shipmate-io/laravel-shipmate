@@ -14,7 +14,7 @@ class JobQueueConnector implements ConnectorInterface
      */
     public function connect(array $config): Queue
     {
-        $shipmateConfig = new ShipmateConfig(config('shipmate'));
+        $shipmateConfig = ShipmateConfig::new();
         $jobQueueConfig = new JobQueueConfig($config);
 
         return new JobQueue(

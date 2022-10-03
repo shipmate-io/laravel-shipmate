@@ -17,6 +17,7 @@
     ],
     "require": {
         "php": "^8.0",
+        "google/cloud-pubsub": "^1.39",
         "google/cloud-tasks": "^1.11",
         "illuminate/contracts": "^9.0",
         "league/flysystem-google-cloud-storage": "^3.3",

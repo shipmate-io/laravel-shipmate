@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipmate\Shipmate\JobQueue\RequestHandler;
+namespace Shipmate\Shipmate\Support;
 
 use Google\Auth\AccessToken;
 

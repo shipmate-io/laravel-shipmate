@@ -2,9 +2,10 @@
 
 namespace Shipmate\Shipmate\Tests;
 
-use Hyperlab\LaravelGoogleCloudTasks\Api\GoogleCloudTasks;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Mockery;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Shipmate\Shipmate\MessageQueue\MessageQueue;
 use Shipmate\Shipmate\ShipmateServiceProvider;
 
 class TestCase extends Orchestra
@@ -29,12 +30,17 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        $config->set('queue.connections.pubsub.driver', 'gcp_pubsub');
-        $config->set('queue.connections.pubsub.subscription', 'pull_test');
-        $config->set('queue.connections.pubsub.topic', 'pubsub_package_tests');
+        config()->set('queue.connections.shipmate.driver', 'shipmate');
+        config()->set('queue.connections.shipmate.topic', 'application');
+        config()->set('queue.connections.shipmate.subscription', 'identity');
 
-        $config->set('pubsub.queue_connection', 'pubsub');
-        $config->set('pubsub.message_handlers', __DIR__.'/messages.php');
+        config()->set('shipmate.project_id', 'abc123');
+        config()->set('shipmate.region_id', 'europe-west1');
+        config()->set('shipmate.email', 'john.doe@example.com');
+        config()->set('shipmate.key', 'eyJzZWNyZXQiOnRydWV9');
+
+        config()->set('shipmate.message_queue.queue_connection', 'shipmate');
+        config()->set('shipmate.message_queue.message_handlers', __DIR__.'/MessageQueue/messages.php');
 
         /*
         $migration = include __DIR__.'/../database/migrations/create_laravel-shipmate_table.php.stub';
@@ -49,9 +55,9 @@ class TestCase extends Orchestra
     {
         putenv('PUBSUB_EMULATOR_HOST=0.0.0.0:8085');
 
-        GoogleCloudTasks::new()
-            ->createTopic()
-            ->createSubscription();
+        $messageQueue = MessageQueue::new();
+        $messageQueue->createTopic('application');
+        $messageQueue->createSubscription('identity', 'application', 'TODO');
     }
 
     /**
@@ -59,9 +65,9 @@ class TestCase extends Orchestra
      */
     protected function deletePubSub(): void
     {
-        GoogleCloudTasks::new()
-            ->deleteSubscription()
-            ->deleteTopic();
+        $messageQueue = MessageQueue::new();
+        $messageQueue->deleteSubscription('identity', 'application');
+        $messageQueue->deleteTopic('application');
     }
 
     protected function makePartialMock(string $class, array $arguments = []): Mockery\MockInterface

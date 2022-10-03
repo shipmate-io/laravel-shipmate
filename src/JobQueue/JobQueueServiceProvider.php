@@ -6,7 +6,6 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
-use Shipmate\Shipmate\JobQueue\RequestHandler\RequestHandler;
 
 class JobQueueServiceProvider extends ServiceProvider
 {
