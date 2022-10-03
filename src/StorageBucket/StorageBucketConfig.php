@@ -2,7 +2,6 @@
 
 namespace Shipmate\Shipmate\StorageBucket;
 
-use Illuminate\Support\Arr;
 use League\Flysystem\Visibility;
 use Shipmate\Shipmate\ShipmateException;
 
