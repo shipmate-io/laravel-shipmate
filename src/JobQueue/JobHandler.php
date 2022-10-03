@@ -2,7 +2,6 @@
 
 namespace Shipmate\Shipmate\JobQueue;
 
-use Illuminate\Container\Container;
 use Illuminate\Queue\Worker;
 use Illuminate\Queue\WorkerOptions;
 use Shipmate\Shipmate\JobQueue\Google\GoogleClient;
@@ -18,15 +17,14 @@ class JobHandler
     {
         $connectionName = $jobPayload->getConnectionName() ?? config('queue.default');
 
-        $config = JobQueueConfig::readFromConnection($connectionName);
-        $googleClient = GoogleClient::new($config);
+        $jobQueueConfig = JobQueueConfig::readFromConnection($connectionName);
+        $googleClient = GoogleClient::new($jobQueueConfig);
 
-        $queueName = $jobPayload->getQueueName() ?? $config->getQueueName();
+        $queueName = $jobPayload->getQueueName() ?? $jobQueueConfig->getQueueName();
         $maxAttempts = $this->getMaxAttempts($googleClient, $queueName);
         $retryUntil = $this->getRetryUntil($googleClient, $queueName, $jobName, $jobExecutionCount);
 
         $job = new Job(
-            container: Container::getInstance(),
             googleClient: $googleClient,
             jobPayload: $jobPayload,
             jobName: $jobName,
@@ -44,9 +42,9 @@ class JobHandler
         );
     }
 
-    private function getMaxAttempts(GoogleClient $client, string $queueName): int
+    private function getMaxAttempts(GoogleClient $googleClient, string $queueName): int
     {
-        $retryConfig = $client->getQueue($queueName)->getRetryConfig();
+        $retryConfig = $googleClient->getQueue($queueName)->getRetryConfig();
 
         $maxAttempts = $retryConfig->getMaxAttempts();
 
@@ -57,13 +55,13 @@ class JobHandler
      * If the job is being attempted again we also check if a max retry duration has been set. If that duration has
      * passed, it should stop trying altogether.
      */
-    private function getRetryUntil(GoogleClient $client, string $queueName, string $jobName, int $attempt): ?int
+    private function getRetryUntil(GoogleClient $googleClient, string $queueName, string $jobName, int $attempt): ?int
     {
         if ($attempt === 0) {
             return null;
         }
 
-        return $client->getJob($queueName, $jobName)->getRetryUntilTimestamp();
+        return $googleClient->getJob($queueName, $jobName)->getRetryUntilTimestamp();
     }
 
     private function instantiateWorker(): Worker

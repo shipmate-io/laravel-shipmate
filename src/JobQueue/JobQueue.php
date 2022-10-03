@@ -13,7 +13,7 @@ class JobQueue extends LaravelQueue implements QueueContract
 {
     public function __construct(
         private GoogleClient $googleClient,
-        private JobQueueConfig $config,
+        private JobQueueConfig $jobQueueConfig,
     ) {
     }
 
@@ -37,7 +37,7 @@ class JobQueue extends LaravelQueue implements QueueContract
      */
     public function push($job, $data = '', $queue = null): void
     {
-        $queueName = $queue ?: $this->config->getQueueName();
+        $queueName = $queue ?: $this->jobQueueConfig->getQueueName();
 
         $this->googleClient->createJob(
             queueName: $queueName,
@@ -54,7 +54,7 @@ class JobQueue extends LaravelQueue implements QueueContract
      */
     public function pushRaw($payload, $queue = null, array $options = []): void
     {
-        $queueName = $queue ?: $this->config->getQueueName();
+        $queueName = $queue ?: $this->jobQueueConfig->getQueueName();
 
         $this->googleClient->createJob(
             queueName: $queueName,
@@ -72,7 +72,7 @@ class JobQueue extends LaravelQueue implements QueueContract
      */
     public function later($delay, $job, $data = '', $queue = null): void
     {
-        $queueName = $queue ?: $this->config->getQueueName();
+        $queueName = $queue ?: $this->jobQueueConfig->getQueueName();
 
         $this->googleClient->createJob(
             queueName: $queueName,

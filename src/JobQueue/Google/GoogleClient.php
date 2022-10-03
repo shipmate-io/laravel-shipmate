@@ -13,21 +13,24 @@ use Shipmate\Shipmate\ShipmateConfig;
 
 class GoogleClient
 {
+    private ShipmateConfig $shipmateConfig;
+
     private CloudTasksClient $client;
 
     public function __construct(
-        private ShipmateConfig $shipmateConfig,
         private JobQueueConfig $jobQueueConfig,
     ) {
+        $this->shipmateConfig = ShipmateConfig::new();
+
         $this->client = new CloudTasksClient([
             'projectId' => $this->shipmateConfig->getProjectId(),
             'keyFile' => $this->shipmateConfig->getKey(),
         ]);
     }
 
-    public static function new(ShipmateConfig $shipmateConfig, JobQueueConfig $jobQueueConfig): static
+    public static function new(JobQueueConfig $jobQueueConfig): static
     {
-        return app(static::class, compact('shipmateConfig', 'jobQueueConfig'));
+        return app(static::class, compact('jobQueueConfig'));
     }
 
     // Queues

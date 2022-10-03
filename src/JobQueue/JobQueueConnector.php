@@ -22,7 +22,7 @@ class JobQueueConnector implements ConnectorInterface
                 shipmateConfig: $shipmateConfig,
                 jobQueueConfig: $jobQueueConfig,
             ),
-            config: $jobQueueConfig,
+            jobQueueConfig: $jobQueueConfig,
         );
     }
 }

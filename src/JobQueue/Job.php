@@ -2,6 +2,7 @@
 
 namespace Shipmate\Shipmate\JobQueue;
 
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Queue\Job as JobContract;
 use Illuminate\Queue\Jobs\Job as LaravelJob;
 use Shipmate\Shipmate\JobQueue\Google\GoogleClient;
@@ -9,7 +10,6 @@ use Shipmate\Shipmate\JobQueue\Google\GoogleClient;
 class Job extends LaravelJob implements JobContract
 {
     public function __construct(
-        protected $container,
         protected GoogleClient $googleClient,
         protected JobPayload $jobPayload,
         protected string $jobName,
@@ -19,6 +19,7 @@ class Job extends LaravelJob implements JobContract
         protected $connectionName,
         protected $queue,
     ) {
+        $this->container = Container::getInstance();
     }
 
     public function getJobId(): string
