@@ -5,6 +5,7 @@ namespace Shipmate\Shipmate\JobQueue;
 use Illuminate\Contracts\Queue\Queue;
 use Illuminate\Queue\Connectors\ConnectorInterface;
 use Shipmate\Shipmate\JobQueue\Google\GoogleClient;
+use Shipmate\Shipmate\ShipmateConfig;
 
 class JobQueueConnector implements ConnectorInterface
 {
@@ -13,11 +14,15 @@ class JobQueueConnector implements ConnectorInterface
      */
     public function connect(array $config): Queue
     {
-        $config = new JobQueueConfig($config);
+        $shipmateConfig = new ShipmateConfig(config('shipmate'));
+        $jobQueueConfig = new JobQueueConfig($config);
 
         return new JobQueue(
-            googleClient: new GoogleClient($config),
-            config: $config,
+            googleClient: new GoogleClient(
+                shipmateConfig: $shipmateConfig,
+                jobQueueConfig: $jobQueueConfig,
+            ),
+            config: $jobQueueConfig,
         );
     }
 }

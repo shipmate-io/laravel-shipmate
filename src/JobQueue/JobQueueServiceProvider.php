@@ -2,15 +2,17 @@
 
 namespace Shipmate\Shipmate\JobQueue;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Routing\Router;
+use Illuminate\Support\ServiceProvider;
 use Shipmate\Shipmate\JobQueue\RequestHandler\RequestHandler;
 
-class JobQueueServiceProvider
+class JobQueueServiceProvider extends ServiceProvider
 {
-    public static function new(): static
+    public static function new(Application $app): static
     {
-        return new static;
+        return new static($app);
     }
 
     public function boot(): void

@@ -9,23 +9,25 @@ use Google\Cloud\Tasks\V2\OidcToken;
 use Google\Cloud\Tasks\V2\Task;
 use Google\Protobuf\Timestamp;
 use Shipmate\Shipmate\JobQueue\JobQueueConfig;
+use Shipmate\Shipmate\ShipmateConfig;
 
 class GoogleClient
 {
     private CloudTasksClient $client;
 
     public function __construct(
-        private JobQueueConfig $config,
+        private ShipmateConfig $shipmateConfig,
+        private JobQueueConfig $jobQueueConfig,
     ) {
         $this->client = new CloudTasksClient([
-            'projectId' => $this->config->getProjectId(),
-            'keyFile' => $this->config->getKey(),
+            'projectId' => $this->shipmateConfig->getProjectId(),
+            'keyFile' => $this->shipmateConfig->getKey(),
         ]);
     }
 
-    public static function new(JobQueueConfig $config): static
+    public static function new(ShipmateConfig $shipmateConfig, JobQueueConfig $jobQueueConfig): static
     {
-        return app(static::class, compact('config'));
+        return app(static::class, compact('shipmateConfig', 'jobQueueConfig'));
     }
 
     // Queues
@@ -53,12 +55,12 @@ class GoogleClient
     public function createJob(string $queueName, string $payload, int $availableAt): GoogleJob
     {
         $httpRequest = $this->instantiateHttpRequest();
-        $httpRequest->setUrl($this->config->getWorkerUrl());
+        $httpRequest->setUrl($this->jobQueueConfig->getWorkerUrl());
         $httpRequest->setHttpMethod(HttpMethod::POST);
         $httpRequest->setBody($payload);
 
         $token = new OidcToken;
-        $token->setServiceAccountEmail($this->config->getEmail());
+        $token->setServiceAccountEmail($this->shipmateConfig->getEmail());
         $httpRequest->setOidcToken($token);
 
         $task = $this->instantiateTask();
@@ -87,8 +89,8 @@ class GoogleClient
     private function generateQueueName(string $queueName): string
     {
         return $this->client->queueName(
-            project: $this->config->getProjectId(),
-            location: $this->config->getRegionId(),
+            project: $this->shipmateConfig->getProjectId(),
+            location: $this->shipmateConfig->getRegionId(),
             queue: $queueName,
         );
     }
@@ -96,8 +98,8 @@ class GoogleClient
     private function generateTaskName(string $queueName, string $taskName): string
     {
         return $this->client->taskName(
-            project: $this->config->getProjectId(),
-            location: $this->config->getRegionId(),
+            project: $this->shipmateConfig->getProjectId(),
+            location: $this->shipmateConfig->getRegionId(),
             queue: $queueName,
             task: $taskName
         );

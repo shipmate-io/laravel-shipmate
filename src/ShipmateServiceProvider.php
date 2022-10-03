@@ -2,7 +2,6 @@
 
 namespace Shipmate\Shipmate;
 
-use Shipmate\Shipmate\Commands\ShipmateCommand;
 use Shipmate\Shipmate\JobQueue\JobQueueServiceProvider;
 use Shipmate\Shipmate\StorageBucket\StorageBucketServiceProvider;
 use Spatie\LaravelPackageTools\Package;
@@ -27,7 +26,7 @@ class ShipmateServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        JobQueueServiceProvider::new()->boot();
-        StorageBucketServiceProvider::new()->boot();
+        JobQueueServiceProvider::new($this->app)->boot();
+        StorageBucketServiceProvider::new($this->app)->boot();
     }
 }

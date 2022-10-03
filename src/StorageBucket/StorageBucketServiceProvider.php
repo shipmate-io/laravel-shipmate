@@ -3,24 +3,29 @@
 namespace Shipmate\Shipmate\StorageBucket;
 
 use Google\Cloud\Storage\StorageClient;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Filesystem as FlysystemDriver;
 use League\Flysystem\GoogleCloudStorage\GoogleCloudStorageAdapter as FlysystemAdapter;
+use Shipmate\Shipmate\ShipmateConfig;
 
-class StorageBucketServiceProvider
+class StorageBucketServiceProvider extends ServiceProvider
 {
-    public static function new(): static
+    public static function new(Application $app): static
     {
-        return new static;
+        return new static($app);
     }
 
     public function boot(): void
     {
-        Storage::extend('shipmate', function ($app, $originalConfig) {
-            $config = StorageBucketConfig::new($originalConfig);
-            $flysystemConfig = $this->constructFlysystemConfig($config);
-            $client = $this->createClient($config);
-            $adapter = $this->createAdapter($client, $config);
+        Storage::extend('shipmate', function ($app, $config) {
+            $shipmateConfig = ShipmateConfig::new($app['config']->get('shipmate'));
+            $storageBucketConfig = StorageBucketConfig::new($config);
+
+            $flysystemConfig = $this->constructFlysystemConfig($storageBucketConfig);
+            $client = $this->createClient($shipmateConfig);
+            $adapter = $this->createAdapter($client, $storageBucketConfig);
 
             return new StorageBucketAdapter(
                 driver: new FlysystemDriver(
@@ -41,7 +46,7 @@ class StorageBucketServiceProvider
         ];
     }
 
-    protected function createClient(StorageBucketConfig $config): StorageClient
+    protected function createClient(ShipmateConfig $config): StorageClient
     {
         return new StorageClient([
             'keyFile' => $config->getKey(),
