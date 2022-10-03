@@ -18,25 +18,27 @@ class StorageBucketConfig
         return new static($config);
     }
 
-    public function getBucket(): string
+    public function getBucketName(): string
     {
-        $bucket = Arr::get($this->config, 'bucket');
+        $bucketName = $this->config['bucket'] ?? null;
 
-        if (! $bucket) {
-            throw new ShipmateException('No value specified for the `bucket` parameter in the Shipmate storage bucket configuration.');
+        if (! $bucketName) {
+            throw new ShipmateException(
+                'No value specified for the `bucket` parameter of the `shipmate` filesystem in the `config/filesystems.php` file.'
+            );
         }
 
-        return $bucket;
+        return $bucketName;
     }
 
     public function getPathPrefix(): string
     {
-        return Arr::get($this->config, 'path_prefix', '');
+        return $this->config['path_prefix'] ?? '';
     }
 
     public function getVisibility(): string
     {
-        $visibility = Arr::get($this->config, 'visibility');
+        $visibility = $this->config['visibility'] ?? null;
 
         $validOptions = [
             Visibility::PRIVATE,
