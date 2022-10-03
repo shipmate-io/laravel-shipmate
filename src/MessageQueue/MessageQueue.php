@@ -4,8 +4,7 @@ namespace Shipmate\Shipmate\MessageQueue;
 
 use Google\Cloud\Core\Exception\ConflictException;
 use Google\Cloud\Core\Exception\ServiceException;
-use Google\Cloud\PubSub\Message;
-use Google\Cloud\PubSub\PubSubClient;
+use Google\Cloud\PubSub\PubSubClient as GoogleClient;
 use Google\Cloud\PubSub\Subscription;
 use Google\Cloud\PubSub\Topic;
 use Illuminate\Support\Str;
@@ -17,7 +16,7 @@ class MessageQueue
 
     private MessageQueueConfig $messageQueueConfig;
 
-    private PubSubClient $client;
+    private GoogleClient $googleClient;
 
     public function __construct()
     {
@@ -33,7 +32,7 @@ class MessageQueue
             $options['transport'] = 'rest';
         }
 
-        $this->client = new PubSubClient($options);
+        $this->googleClient = new GoogleClient($options);
     }
 
     public static function new(): static
@@ -48,7 +47,7 @@ class MessageQueue
         try {
             $this->getTopic()->exists();
         } catch (ServiceException $exception) {
-            throw new ClientNotReadyYet($exception->getMessage());
+            throw new MessageQueueNotReadyYet($exception->getMessage());
         }
     }
 
@@ -61,7 +60,7 @@ class MessageQueue
     {
         $topics = [];
 
-        foreach ($this->client->topics() as $topic) {
+        foreach ($this->googleClient->topics() as $topic) {
             $topics[] = $topic;
         }
 
@@ -72,7 +71,7 @@ class MessageQueue
     {
         $name ??= $this->messageQueueConfig->getDefaultTopic();
 
-        return $this->client->topic($name);
+        return $this->googleClient->topic($name);
     }
 
     public function createTopic(?string $name = null): void
@@ -143,7 +142,9 @@ class MessageQueue
             return;
         }
 
-        if ($this->subscriptionHasEndpoint($subscription, $endpoint)) {
+        $currentPushEndpoint = $subscription->info()['pushConfig']['pushEndpoint'] ?? null;
+
+        if ($currentPushEndpoint === $endpoint) {
             return;
         }
 
@@ -174,26 +175,5 @@ class MessageQueue
                 'type' => $message->publishAs(),
             ],
         ]);
-    }
-
-    public function acknowledgeMessage(
-        Message $message, ?string $subscriptionName = null, ?string $topicName = null
-    ): void {
-        $this->getSubscription($subscriptionName, $topicName)->acknowledge($message);
-    }
-
-    // Helpers
-
-    private function subscriptionHasEndpoint(Subscription $subscription, string $endpoint): bool
-    {
-        $currentPushConfig = $subscription->info()['pushConfig'] ?? null;
-
-        if ($currentPushConfig === null) {
-            return false;
-        }
-
-        $currentPushEndpoint = $currentPushConfig['pushEndpoint'] ?? null;
-
-        return $currentPushEndpoint === $endpoint;
     }
 }

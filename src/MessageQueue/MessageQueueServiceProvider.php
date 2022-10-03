@@ -4,6 +4,7 @@ namespace Shipmate\Shipmate\MessageQueue;
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,6 +28,7 @@ class MessageQueueServiceProvider extends ServiceProvider
         );
 
         $this->registerEventListener();
+        $this->registerRequestHandler();
     }
 
     private function registerEventListener(): void
@@ -40,5 +42,13 @@ class MessageQueueServiceProvider extends ServiceProvider
 
             MessageQueue::new()->publishMessage($event);
         });
+    }
+
+    private function registerRequestHandler(): void
+    {
+        /** @var Router $router */
+        $router = $this->app['router'];
+
+        $router->post('shipmate/handle-message', RequestHandler::class);
     }
 }

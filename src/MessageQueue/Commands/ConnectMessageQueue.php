@@ -4,8 +4,8 @@ namespace Shipmate\Shipmate\MessageQueue\Commands;
 
 use Illuminate\Console\Command;
 use InvalidArgumentException;
-use Shipmate\Shipmate\MessageQueue\ClientNotReadyYet;
 use Shipmate\Shipmate\MessageQueue\MessageQueue;
+use Shipmate\Shipmate\MessageQueue\MessageQueueNotReadyYet;
 
 class ConnectMessageQueue extends Command
 {
@@ -31,7 +31,7 @@ class ConnectMessageQueue extends Command
             try {
                 $messageQueue->connect();
                 $connected = true;
-            } catch (ClientNotReadyYet $e) {
+            } catch (MessageQueueNotReadyYet $e) {
                 if ($timeout <= 0) {
                     throw $e;
                 }
