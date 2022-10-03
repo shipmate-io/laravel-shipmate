@@ -45,7 +45,7 @@ class ShipmateConfig
 
         $decodedKey = json_decode(base64_decode($key), true);
 
-        if(!is_array($decodedKey)) {
+        if (! is_array($decodedKey)) {
             throw new ShipmateException(
                 'The value specified for the `key` parameter in the `config/shipmate.php` file is not a valid key.'
             );

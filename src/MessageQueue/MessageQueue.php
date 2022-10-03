@@ -133,8 +133,8 @@ class MessageQueue
 
         $options = [
             'pushConfig' => [
-                'pushEndpoint' => $endpoint
-            ]
+                'pushEndpoint' => $endpoint,
+            ],
         ];
 
         if (! $subscription->exists()) {
