@@ -7,27 +7,12 @@
 
 This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
 
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-shipmate.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-shipmate)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
-
 ## Installation
 
 You can install the package via composer:
 
 ```bash
 composer require shipmate-io/laravel-shipmate
-```
-
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="laravel-shipmate-migrations"
-php artisan migrate
 ```
 
 You can publish the config file with:
@@ -40,27 +25,182 @@ This is the contents of the published config file:
 
 ```php
 return [
+
+    'credentials' => [
+        'email' => env('SHIPMATE_EMAIL'),
+        'key' => env('SHIPMATE_KEY'),
+        'project_id' => env('SHIPMATE_PROJECT_ID'),
+        'region_id' => env('SHIPMATE_REGION_ID'),
+    ],
+
+    'message_queue' => [
+        'enabled' => true,
+        'register_request_handler' => true,
+    ],
+    
+    'job_queue' => [
+        'register_request_handler' => true,
+    ],
+
 ];
 ```
 
-Optionally, you can publish the views using
+## Job queues
 
-```bash
-php artisan vendor:publish --tag="laravel-shipmate-views"
-```
-
-## Usage
+Add a new queue connection to your `config/queue.php` file:
 
 ```php
-$shipmate = new Shipmate\Shipmate();
-echo $shipmate->echoPhrase('Hello, Shipmate!');
+'shipmate' => [
+    'driver' => 'shipmate',
+    'queue' => env('QUEUE_NAME'),
+    'worker_url' => env('QUEUE_WORKER_URL'),
+],
 ```
 
-## Testing
+Update the `QUEUE_CONNECTION` environment variable:
 
-```bash
-composer test
 ```
+QUEUE_CONNECTION=shipmate
+```
+
+## Message handlers
+
+A message is a simple class that implements the `Shipmate\Shipmate\MessageQueue\ShouldPublish` interface.
+
+```php
+use Shipmate\Shipmate\MessageQueue\ShouldPublish;
+
+class UserCreated implements ShouldPublish
+{
+    public function publishAs(): string
+    {
+        return 'user.created';
+    }
+
+    public function publishWith(): array
+    {
+        return [
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+        ];
+    }
+}
+```
+
+To publish a message to the message queue, you can dispatch it using Laravel's event helper.
+
+```php
+event(new UserCreated);
+```
+
+The message queue delivers this message to the other microservices in your application as an HTTP request. To accept
+this request, the package automatically registers the following route in your microservice.
+
+```php
+Route::post('shipmate/handle-message', Shipmate\Shipmate\MessageQueue\RequestHandler::class);
+```
+
+Next, the package looks in the `routes/messages.php` file of your microservice for a handler that corresponds with the
+type of the message. The contents of the file should look like this:
+
+```php
+<?php
+
+return [
+
+    'user.created' => HandleUserCreatedMessage::class,
+
+    'user.deleted' => [HandleUserDeletedMessage::class, 'handle'],
+
+];
+```
+
+The file returns an associative array in which:
+- **a key** is the message type that the application wants to receive
+- **a value** is the class within your application that handles the incoming message of this type
+
+A message handler can be defined in two ways:
+
+1. By referencing a class
+
+    ```php
+    'user.created' => HandleUserCreatedMessage::class,
+    ```
+
+   In this case, the package looks for a public method in the class that accepts a `Shipmate\Shipmate\MessageQueue\Message`
+   as argument. This method can be called anything, as shown here:
+
+    ```php
+    use Shipmate\Shipmate\MessageQueue\Message;
+   
+    class HandleUserCreatedMessage
+    {
+        public function __invoke(Message $message): void
+        {
+            $firstName = $message->payload->get('first_name');
+   
+            //
+        }
+    }
+    
+    class HandleUserCreatedMessage
+    {
+        public function handle(Message $message): void
+        {
+            $firstName = $message->payload->get('first_name');
+   
+            //
+        }
+    }
+    
+    class HandleUserCreatedMessage
+    {
+        public function execute(Message $message): void
+        {
+            $firstName = $message->payload->get('first_name');
+   
+            //
+        }
+    }
+    ```
+
+2. By referencing a class and method
+
+    ```php
+    'user.created' => [HandleUserCreatedMessage::class, 'handle'],
+    ```
+
+If no handler is registered for a particular type of message, the message is discarded.
+
+## Storage buckets
+
+Add a new disk to your `config/filesystems.php` file:
+
+```php
+'shipmate' => [
+    'driver' => 'shipmate',
+    'bucket' => env('STORAGE_BUCKET_NAME'),
+    'path_prefix' => env('STORAGE_BUCKET_PATH_PREFIX', ''), // e.g. /path/in/bucket
+    'visibility' => 'public', // public or private
+],
+```
+
+Store and retrieve files from your storage bucket:
+
+```php
+$disk = Storage::disk('shipmate');
+
+$disk->put('avatars/1', $fileContents);
+$exists = $disk->exists('file.jpg');
+$time = $disk->lastModified('file1.jpg');
+$disk->copy('old/file1.jpg', 'new/file1.jpg');
+$disk->move('old/file1.jpg', 'new/file1.jpg');
+$url = $disk->url('folder/my_file.txt');
+$url = $disk->temporaryUrl('folder/my_file.txt', now()->addMinutes(30));
+$disk->setVisibility('folder/my_file.txt', 'public');
+```
+
+See [https://laravel.com/docs/master/filesystem](https://laravel.com/docs/master/filesystem) for full list of available functionality.
 
 ## Changelog
 
