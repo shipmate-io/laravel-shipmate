@@ -1,11 +1,11 @@
 <?php
 
-namespace Shipmate\Shipmate\JobQueue;
+namespace Shipmate\LaravelShipmate\JobQueue;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Shipmate\Shipmate\ShipmateException;
-use Shipmate\Shipmate\Support\OpenId;
+use Shipmate\LaravelShipmate\ShipmateException;
+use Shipmate\LaravelShipmate\Support\OpenId;
 
 class RequestHandler
 {

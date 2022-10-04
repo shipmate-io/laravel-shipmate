@@ -1,9 +1,9 @@
 <?php
 
-namespace Shipmate\Shipmate\StorageBucket;
+namespace Shipmate\LaravelShipmate\StorageBucket;
 
 use League\Flysystem\Visibility;
-use Shipmate\Shipmate\ShipmateException;
+use Shipmate\LaravelShipmate\ShipmateException;
 
 class StorageBucketConfig
 {

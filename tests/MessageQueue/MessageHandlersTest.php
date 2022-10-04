@@ -1,15 +1,15 @@
 <?php
 
-namespace Shipmate\Shipmate\Tests\MessageQueue;
+namespace Shipmate\LaravelShipmate\Tests\MessageQueue;
 
 use Illuminate\Support\Str;
-use Shipmate\Shipmate\MessageQueue\Message;
-use Shipmate\Shipmate\MessageQueue\MessageHandler;
-use Shipmate\Shipmate\MessageQueue\MessageHandlers;
-use Shipmate\Shipmate\MessageQueue\MessagePayload;
-use Shipmate\Shipmate\Tests\MessageQueue\Subscribers\HandleUserCreated;
-use Shipmate\Shipmate\Tests\MessageQueue\Subscribers\HandleUserDeleted;
-use Shipmate\Shipmate\Tests\TestCase;
+use Shipmate\LaravelShipmate\MessageQueue\Message;
+use Shipmate\LaravelShipmate\MessageQueue\MessageHandler;
+use Shipmate\LaravelShipmate\MessageQueue\MessageHandlers;
+use Shipmate\LaravelShipmate\MessageQueue\MessagePayload;
+use Shipmate\LaravelShipmate\Tests\MessageQueue\Subscribers\HandleUserCreated;
+use Shipmate\LaravelShipmate\Tests\MessageQueue\Subscribers\HandleUserDeleted;
+use Shipmate\LaravelShipmate\Tests\TestCase;
 
 class MessageHandlersTest extends TestCase
 {

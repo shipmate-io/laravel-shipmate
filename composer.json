@@ -33,12 +33,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Shipmate\\Shipmate\\": "src"
+            "Shipmate\\LaravelShipmate\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Shipmate\\Shipmate\\Tests\\": "tests"
+            "Shipmate\\LaravelShipmate\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -53,11 +53,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Shipmate\\Shipmate\\ShipmateServiceProvider"
-            ],
-            "aliases": {
-                "Shipmate": "Shipmate\\Shipmate\\Facades\\Shipmate"
-            }
+                "Shipmate\\LaravelShipmate\\ShipmateServiceProvider"
+            ]
         }
     },
     "minimum-stability": "dev",

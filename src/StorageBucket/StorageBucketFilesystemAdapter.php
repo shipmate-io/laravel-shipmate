@@ -1,13 +1,13 @@
 <?php
 
-namespace Shipmate\Shipmate\StorageBucket;
+namespace Shipmate\LaravelShipmate\StorageBucket;
 
 use Google\Cloud\Storage\Connection\Rest;
 use Google\Cloud\Storage\StorageClient as GoogleClient;
 use Illuminate\Filesystem\FilesystemAdapter;
 use League\Flysystem\Filesystem as FilesystemDriver;
 use League\Flysystem\GoogleCloudStorage\GoogleCloudStorageAdapter as GoogleFilesystemAdapter;
-use Shipmate\Shipmate\ShipmateConfig;
+use Shipmate\LaravelShipmate\ShipmateConfig;
 
 class StorageBucketFilesystemAdapter extends FilesystemAdapter
 {

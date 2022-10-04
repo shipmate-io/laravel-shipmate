@@ -78,10 +78,10 @@ QUEUE_CONNECTION=shipmate
 
 ## Message handlers
 
-A message is a simple class that implements the `Shipmate\Shipmate\MessageQueue\ShouldPublish` interface.
+A message is a simple class that implements the `Shipmate\LaravelShipmate\MessageQueue\ShouldPublish` interface.
 
 ```php
-use Shipmate\Shipmate\MessageQueue\ShouldPublish;
+use Shipmate\LaravelShipmate\MessageQueue\ShouldPublish;
 
 class UserCreated implements ShouldPublish
 {
@@ -110,7 +110,7 @@ The message queue delivers this message to the other microservices in your appli
 this request, the package automatically registers the following route in your microservice.
 
 ```php
-Route::post('shipmate/handle-message', Shipmate\Shipmate\MessageQueue\RequestHandler::class);
+Route::post('shipmate/handle-message', Shipmate\LaravelShipmate\MessageQueue\RequestHandler::class);
 ```
 
 Next, the package looks in the `routes/messages.php` file of your microservice for a handler that corresponds with the
@@ -140,11 +140,11 @@ A message handler can be defined in two ways:
     'user.created' => HandleUserCreatedMessage::class,
     ```
 
-   In this case, the package looks for a public method in the class that accepts a `Shipmate\Shipmate\MessageQueue\Message`
+   In this case, the package looks for a public method in the class that accepts a `Shipmate\LaravelShipmate\MessageQueue\Message`
    as argument. This method can be called anything, as shown here:
 
     ```php
-    use Shipmate\Shipmate\MessageQueue\Message;
+    use Shipmate\LaravelShipmate\MessageQueue\Message;
    
     class HandleUserCreatedMessage
     {

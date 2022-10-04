@@ -1,10 +1,10 @@
 <?php
 
-namespace Shipmate\Shipmate\JobQueue;
+namespace Shipmate\LaravelShipmate\JobQueue;
 
 use Illuminate\Queue\Worker;
 use Illuminate\Queue\WorkerOptions;
-use Shipmate\Shipmate\JobQueue\Google\GoogleClient;
+use Shipmate\LaravelShipmate\JobQueue\Google\GoogleClient;
 
 class JobHandler
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Shipmate\Shipmate;
+namespace Shipmate\LaravelShipmate;
 
 use Illuminate\Container\Container;
-use Shipmate\Shipmate\JobQueue\JobQueueServiceProvider;
-use Shipmate\Shipmate\MessageQueue\MessageQueueServiceProvider;
-use Shipmate\Shipmate\StorageBucket\StorageBucketServiceProvider;
+use Shipmate\LaravelShipmate\JobQueue\JobQueueServiceProvider;
+use Shipmate\LaravelShipmate\MessageQueue\MessageQueueServiceProvider;
+use Shipmate\LaravelShipmate\StorageBucket\StorageBucketServiceProvider;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 

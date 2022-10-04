@@ -1,8 +1,8 @@
 <?php
 
-namespace Shipmate\Shipmate\Tests\MessageQueue\Events;
+namespace Shipmate\LaravelShipmate\Tests\MessageQueue\Events;
 
-use Shipmate\Shipmate\MessageQueue\ShouldPublish;
+use Shipmate\LaravelShipmate\MessageQueue\ShouldPublish;
 
 class UserCreated implements ShouldPublish
 {

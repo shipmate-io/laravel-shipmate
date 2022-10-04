@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipmate\Shipmate\Tests;
+namespace Shipmate\LaravelShipmate\Tests;
 
 class Log
 {

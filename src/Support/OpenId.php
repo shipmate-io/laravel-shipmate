@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipmate\Shipmate\Support;
+namespace Shipmate\LaravelShipmate\Support;
 
 use Google\Auth\AccessToken;
 

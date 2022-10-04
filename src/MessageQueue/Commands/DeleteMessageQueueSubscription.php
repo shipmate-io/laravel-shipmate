@@ -1,9 +1,9 @@
 <?php
 
-namespace Shipmate\Shipmate\MessageQueue\Commands;
+namespace Shipmate\LaravelShipmate\MessageQueue\Commands;
 
 use Illuminate\Console\Command;
-use Shipmate\Shipmate\MessageQueue\MessageQueue;
+use Shipmate\LaravelShipmate\MessageQueue\MessageQueue;
 
 class DeleteMessageQueueSubscription extends Command
 {

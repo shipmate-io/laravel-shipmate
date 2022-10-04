@@ -1,11 +1,11 @@
 <?php
 
-namespace Shipmate\Shipmate\MessageQueue\Commands;
+namespace Shipmate\LaravelShipmate\MessageQueue\Commands;
 
 use Illuminate\Console\Command;
 use InvalidArgumentException;
-use Shipmate\Shipmate\MessageQueue\MessageQueue;
-use Shipmate\Shipmate\MessageQueue\MessageQueueNotReadyYet;
+use Shipmate\LaravelShipmate\MessageQueue\MessageQueue;
+use Shipmate\LaravelShipmate\MessageQueue\MessageQueueNotReadyYet;
 
 class ConnectMessageQueue extends Command
 {

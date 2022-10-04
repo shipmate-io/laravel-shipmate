@@ -1,9 +1,9 @@
 <?php
 
-namespace Shipmate\Shipmate\Tests\MessageQueue\Subscribers;
+namespace Shipmate\LaravelShipmate\Tests\MessageQueue\Subscribers;
 
-use Shipmate\Shipmate\MessageQueue\Message;
-use Shipmate\Shipmate\Tests\Log;
+use Shipmate\LaravelShipmate\MessageQueue\Message;
+use Shipmate\LaravelShipmate\Tests\Log;
 
 class HandleUserCreated
 {

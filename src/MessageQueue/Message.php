@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipmate\Shipmate\MessageQueue;
+namespace Shipmate\LaravelShipmate\MessageQueue;
 
 class Message
 {

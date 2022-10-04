@@ -1,8 +1,8 @@
 <?php
 
-namespace Shipmate\Shipmate\JobQueue;
+namespace Shipmate\LaravelShipmate\JobQueue;
 
-use Shipmate\Shipmate\ShipmateException;
+use Shipmate\LaravelShipmate\ShipmateException;
 use Spatie\Url\Url;
 
 class JobQueueConfig

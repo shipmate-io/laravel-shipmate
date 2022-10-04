@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipmate\Shipmate\MessageQueue;
+namespace Shipmate\LaravelShipmate\MessageQueue;
 
 use Google\Cloud\Core\Exception\ConflictException;
 use Google\Cloud\Core\Exception\ServiceException;
@@ -8,7 +8,7 @@ use Google\Cloud\PubSub\PubSubClient as GoogleClient;
 use Google\Cloud\PubSub\Subscription;
 use Google\Cloud\PubSub\Topic;
 use Illuminate\Support\Str;
-use Shipmate\Shipmate\ShipmateConfig;
+use Shipmate\LaravelShipmate\ShipmateConfig;
 
 class MessageQueue
 {

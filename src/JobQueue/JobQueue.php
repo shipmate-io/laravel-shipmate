@@ -1,13 +1,13 @@
 <?php
 
-namespace Shipmate\Shipmate\JobQueue;
+namespace Shipmate\LaravelShipmate\JobQueue;
 
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Contracts\Queue\Queue as QueueContract;
 use Illuminate\Queue\Queue as LaravelQueue;
-use Shipmate\Shipmate\JobQueue\Google\GoogleClient;
+use Shipmate\LaravelShipmate\JobQueue\Google\GoogleClient;
 
 class JobQueue extends LaravelQueue implements QueueContract
 {

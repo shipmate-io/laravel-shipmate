@@ -1,11 +1,11 @@
 <?php
 
-namespace Shipmate\Shipmate\JobQueue;
+namespace Shipmate\LaravelShipmate\JobQueue;
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Queue\Job as JobContract;
 use Illuminate\Queue\Jobs\Job as LaravelJob;
-use Shipmate\Shipmate\JobQueue\Google\GoogleClient;
+use Shipmate\LaravelShipmate\JobQueue\Google\GoogleClient;
 
 class Job extends LaravelJob implements JobContract
 {

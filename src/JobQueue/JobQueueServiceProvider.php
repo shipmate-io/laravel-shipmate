@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipmate\Shipmate\JobQueue;
+namespace Shipmate\LaravelShipmate\JobQueue;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Queue\QueueManager;

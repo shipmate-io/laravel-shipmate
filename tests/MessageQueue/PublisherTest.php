@@ -1,11 +1,11 @@
 <?php
 
-namespace Shipmate\Shipmate\Tests\MessageQueue;
+namespace Shipmate\LaravelShipmate\Tests\MessageQueue;
 
-use Shipmate\Shipmate\MessageQueue\MessageQueue;
-use Shipmate\Shipmate\Tests\MessageQueue\Events\UserCreated;
-use Shipmate\Shipmate\Tests\MessageQueue\Events\UserDeleted;
-use Shipmate\Shipmate\Tests\TestCase;
+use Shipmate\LaravelShipmate\MessageQueue\MessageQueue;
+use Shipmate\LaravelShipmate\Tests\MessageQueue\Events\UserCreated;
+use Shipmate\LaravelShipmate\Tests\MessageQueue\Events\UserDeleted;
+use Shipmate\LaravelShipmate\Tests\TestCase;
 
 class PublisherTest extends TestCase
 {

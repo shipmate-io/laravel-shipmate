@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipmate\Shipmate\StorageBucket;
+namespace Shipmate\LaravelShipmate\StorageBucket;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Storage;

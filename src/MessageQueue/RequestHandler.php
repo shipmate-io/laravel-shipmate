@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipmate\Shipmate\MessageQueue;
+namespace Shipmate\LaravelShipmate\MessageQueue;
 
 use Exception;
 use Illuminate\Http\Request;

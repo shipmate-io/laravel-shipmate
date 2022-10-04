@@ -1,10 +1,10 @@
 <?php
 
-namespace Shipmate\Shipmate\MessageQueue\Commands;
+namespace Shipmate\LaravelShipmate\MessageQueue\Commands;
 
 use Google\Cloud\PubSub\Subscription;
 use Illuminate\Console\Command;
-use Shipmate\Shipmate\MessageQueue\MessageQueue;
+use Shipmate\LaravelShipmate\MessageQueue\MessageQueue;
 
 class ListMessageQueueSubscriptions extends Command
 {

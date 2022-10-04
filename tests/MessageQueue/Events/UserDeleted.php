@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipmate\Shipmate\Tests\MessageQueue\Events;
+namespace Shipmate\LaravelShipmate\Tests\MessageQueue\Events;
 
 class UserDeleted
 {

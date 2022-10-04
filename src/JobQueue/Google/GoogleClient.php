@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipmate\Shipmate\JobQueue\Google;
+namespace Shipmate\LaravelShipmate\JobQueue\Google;
 
 use Google\Cloud\Tasks\V2\CloudTasksClient;
 use Google\Cloud\Tasks\V2\HttpMethod;
@@ -8,8 +8,8 @@ use Google\Cloud\Tasks\V2\HttpRequest;
 use Google\Cloud\Tasks\V2\OidcToken;
 use Google\Cloud\Tasks\V2\Task;
 use Google\Protobuf\Timestamp;
-use Shipmate\Shipmate\JobQueue\JobQueueConfig;
-use Shipmate\Shipmate\ShipmateConfig;
+use Shipmate\LaravelShipmate\JobQueue\JobQueueConfig;
+use Shipmate\LaravelShipmate\ShipmateConfig;
 
 class GoogleClient
 {

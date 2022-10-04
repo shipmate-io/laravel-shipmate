@@ -1,7 +1,7 @@
 <?php
 
-use Shipmate\Shipmate\Tests\MessageQueue\Subscribers\HandleUserCreated;
-use Shipmate\Shipmate\Tests\MessageQueue\Subscribers\HandleUserDeleted;
+use Shipmate\LaravelShipmate\Tests\MessageQueue\Subscribers\HandleUserCreated;
+use Shipmate\LaravelShipmate\Tests\MessageQueue\Subscribers\HandleUserDeleted;
 
 return [
 

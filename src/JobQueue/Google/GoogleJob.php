@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipmate\Shipmate\JobQueue\Google;
+namespace Shipmate\LaravelShipmate\JobQueue\Google;
 
 use Google\Cloud\Tasks\V2\Attempt;
 use Google\Cloud\Tasks\V2\Task;

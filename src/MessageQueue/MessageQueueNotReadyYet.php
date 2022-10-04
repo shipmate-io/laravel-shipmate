@@ -1,8 +1,8 @@
 <?php
 
-namespace Shipmate\Shipmate\MessageQueue;
+namespace Shipmate\LaravelShipmate\MessageQueue;
 
-use Shipmate\Shipmate\ShipmateException;
+use Shipmate\LaravelShipmate\ShipmateException;
 
 class MessageQueueNotReadyYet extends ShipmateException
 {

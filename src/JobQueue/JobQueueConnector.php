@@ -1,10 +1,10 @@
 <?php
 
-namespace Shipmate\Shipmate\JobQueue;
+namespace Shipmate\LaravelShipmate\JobQueue;
 
 use Illuminate\Contracts\Queue\Queue;
 use Illuminate\Queue\Connectors\ConnectorInterface;
-use Shipmate\Shipmate\JobQueue\Google\GoogleClient;
+use Shipmate\LaravelShipmate\JobQueue\Google\GoogleClient;
 
 class JobQueueConnector implements ConnectorInterface
 {

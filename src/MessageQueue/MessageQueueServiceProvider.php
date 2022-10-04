@@ -1,19 +1,19 @@
 <?php
 
-namespace Shipmate\Shipmate\MessageQueue;
+namespace Shipmate\LaravelShipmate\MessageQueue;
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Shipmate\Shipmate\MessageQueue\Commands\ConnectMessageQueue;
-use Shipmate\Shipmate\MessageQueue\Commands\CreateMessageQueueSubscription;
-use Shipmate\Shipmate\MessageQueue\Commands\CreateMessageQueueTopic;
-use Shipmate\Shipmate\MessageQueue\Commands\DeleteMessageQueueSubscription;
-use Shipmate\Shipmate\MessageQueue\Commands\DeleteMessageQueueTopic;
-use Shipmate\Shipmate\MessageQueue\Commands\ListMessageQueueSubscriptions;
-use Shipmate\Shipmate\MessageQueue\Commands\ListMessageQueueTopics;
+use Shipmate\LaravelShipmate\MessageQueue\Commands\ConnectMessageQueue;
+use Shipmate\LaravelShipmate\MessageQueue\Commands\CreateMessageQueueSubscription;
+use Shipmate\LaravelShipmate\MessageQueue\Commands\CreateMessageQueueTopic;
+use Shipmate\LaravelShipmate\MessageQueue\Commands\DeleteMessageQueueSubscription;
+use Shipmate\LaravelShipmate\MessageQueue\Commands\DeleteMessageQueueTopic;
+use Shipmate\LaravelShipmate\MessageQueue\Commands\ListMessageQueueSubscriptions;
+use Shipmate\LaravelShipmate\MessageQueue\Commands\ListMessageQueueTopics;
 use Spatie\LaravelPackageTools\Package;
 
 class MessageQueueServiceProvider extends ServiceProvider

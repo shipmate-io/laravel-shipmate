@@ -1,10 +1,10 @@
 <?php
 
-namespace Shipmate\Shipmate\JobQueue\Google;
+namespace Shipmate\LaravelShipmate\JobQueue\Google;
 
 use Google\Cloud\Tasks\V2\Queue;
 use Google\Cloud\Tasks\V2\RetryConfig;
-use Shipmate\Shipmate\ShipmateException;
+use Shipmate\LaravelShipmate\ShipmateException;
 
 class GoogleQueue
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Shipmate\Shipmate\Tests;
+namespace Shipmate\LaravelShipmate\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Mockery;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Shipmate\Shipmate\MessageQueue\MessageQueue;
-use Shipmate\Shipmate\ShipmateServiceProvider;
+use Shipmate\LaravelShipmate\MessageQueue\MessageQueue;
+use Shipmate\LaravelShipmate\ShipmateServiceProvider;
 
 class TestCase extends Orchestra
 {

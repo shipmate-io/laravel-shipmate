@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipmate\Shipmate;
+namespace Shipmate\LaravelShipmate;
 
 use Exception;
 
