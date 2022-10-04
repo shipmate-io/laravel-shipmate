@@ -43,6 +43,6 @@ class JobQueueConfig
     {
         $url = $this->config['worker_url'] ?? request()->getSchemeAndHttpHost();
 
-        return Url::fromString($url)->withPath('handle-job');
+        return Url::fromString($url)->withPath('shipmate/handle-job');
     }
 }

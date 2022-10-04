@@ -7,12 +7,33 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Shipmate\Shipmate\MessageQueue\Commands\ConnectMessageQueue;
+use Shipmate\Shipmate\MessageQueue\Commands\CreateMessageQueueSubscription;
+use Shipmate\Shipmate\MessageQueue\Commands\CreateMessageQueueTopic;
+use Shipmate\Shipmate\MessageQueue\Commands\DeleteMessageQueueSubscription;
+use Shipmate\Shipmate\MessageQueue\Commands\DeleteMessageQueueTopic;
+use Shipmate\Shipmate\MessageQueue\Commands\ListMessageQueueSubscriptions;
+use Shipmate\Shipmate\MessageQueue\Commands\ListMessageQueueTopics;
+use Spatie\LaravelPackageTools\Package;
 
 class MessageQueueServiceProvider extends ServiceProvider
 {
     public static function new(Application $app): static
     {
         return new static($app);
+    }
+
+    public function configurePackage(Package $package): void
+    {
+        $package
+            ->hasRoutes('messages')
+            ->hasCommand(ConnectMessageQueue::class)
+            ->hasCommand(CreateMessageQueueSubscription::class)
+            ->hasCommand(CreateMessageQueueTopic::class)
+            ->hasCommand(DeleteMessageQueueSubscription::class)
+            ->hasCommand(DeleteMessageQueueTopic::class)
+            ->hasCommand(ListMessageQueueSubscriptions::class)
+            ->hasCommand(ListMessageQueueTopics::class);
     }
 
     public function boot(): void

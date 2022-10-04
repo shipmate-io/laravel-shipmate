@@ -19,7 +19,7 @@ class ShipmateConfig
      */
     public function getEmail(): string
     {
-        $email = $this->config['email'] ?? env('SHIPMATE_EMAIL');
+        $email = $this->config['credentials']['email'] ?? env('SHIPMATE_EMAIL');
 
         if (! $email) {
             throw new ShipmateException(
@@ -35,7 +35,7 @@ class ShipmateConfig
      */
     public function getKey(): array
     {
-        $key = $this->config['key'] ?? env('SHIPMATE_KEY');
+        $key = $this->config['credentials']['key'] ?? env('SHIPMATE_KEY');
 
         if (! $key) {
             throw new ShipmateException(
@@ -59,7 +59,7 @@ class ShipmateConfig
      */
     public function getProjectId(): string
     {
-        $projectId = $this->config['project_id'] ?? env('SHIPMATE_PROJECT_ID');
+        $projectId = $this->config['credentials']['project_id'] ?? env('SHIPMATE_PROJECT_ID');
 
         if (! $projectId) {
             throw new ShipmateException(
@@ -75,7 +75,7 @@ class ShipmateConfig
      */
     public function getRegionId(): string
     {
-        $regionId = $this->config['region_id'] ?? env('SHIPMATE_REGION_ID');
+        $regionId = $this->config['credentials']['region_id'] ?? env('SHIPMATE_REGION_ID');
 
         if (! $regionId) {
             throw new ShipmateException(
