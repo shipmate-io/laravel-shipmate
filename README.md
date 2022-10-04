@@ -5,7 +5,7 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/shipmate-io/laravel-shipmate/Fix%20PHP%20code%20style%20issues?label=code%20style)](https://github.com/shipmate-io/laravel-shipmate/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/shipmate-io/laravel-shipmate.svg?style=flat-square)](https://packagist.org/packages/shipmate-io/laravel-shipmate)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+Shipmate is a fully managed hosting platform that eliminates the complexity of shipping microservice apps. This package contains everything you need to make your Laravel microservice run smoothly on Shipmate. To learn more about Shipmate and how to use this package, please consult the official documentation.
 
 ## Installation
 
