@@ -15,50 +15,18 @@ You can install the package via composer:
 composer require shipmate-io/laravel-shipmate
 ```
 
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="laravel-shipmate-config"
-```
-
-This is the contents of the published config file:
+To enter the credentials used to authenticate with Shipmate, add the following code snippet to your service's `config/services.php` file:
 
 ```php
-return [
-
-    /*
-     * The credentials used to authenticate with Shipmate.
-     */
-    'credentials' => [
-        'email' => env('SHIPMATE_EMAIL'),
-        'key' => env('SHIPMATE_KEY'),
-        'project_id' => env('SHIPMATE_PROJECT_ID'),
-        'region_id' => env('SHIPMATE_REGION_ID'),
-    ],
-
-    'message_queue' => [
-    
-        /*
-         * The name of the default message queue topic that is used to publish messages.
-         */
-        'topic' => env('MESSAGE_QUEUE_TOPIC'),
-    
-        /*
-         * The name of the default message queue subscription that is used to receive messages.
-         */
-        'subscription' => env('MESSAGE_QUEUE_SUBSCRIPTION'),
-    
-        /*
-         * The file within your code base that defines your message handlers.
-         */
-        'message_handlers' => base_path('routes/messages.php'),
-        
-    ],
-
-];
+'shipmate' => [
+    'email' => env('SHIPMATE_EMAIL'),
+    'key' => env('SHIPMATE_KEY'),
+    'project_id' => env('SHIPMATE_PROJECT_ID'),
+    'region_id' => env('SHIPMATE_REGION_ID'),
+],
 ```
 
-## Job queues
+## Job queue
 
 Add a new queue connection to your `config/queue.php` file:
 
@@ -76,7 +44,36 @@ Update the `QUEUE_CONNECTION` environment variable:
 QUEUE_CONNECTION=shipmate
 ```
 
-## Message handlers
+## Message queue
+
+The message queue are configured in the `config/message-queue.php` file.
+
+```php
+return [
+
+    /*
+     * The name of the default message queue topic that is used to publish messages.
+     */
+    'topic' => env('MESSAGE_QUEUE_TOPIC'),
+
+    /*
+     * The name of the default message queue subscription that is used to receive messages.
+     */
+    'subscription' => env('MESSAGE_QUEUE_SUBSCRIPTION'),
+
+    /*
+     * The file within your code base that defines your message handlers.
+     */
+    'message_handlers' => base_path('routes/messages.php'),
+
+];
+```
+
+You can publish this file by running the following artisan command:
+
+```bash
+php artisan vendor:publish --tag="shipmate-config"
+```
 
 A message is a simple class that implements the `Shipmate\LaravelShipmate\MessageQueue\ShouldPublish` interface.
 
@@ -185,7 +182,7 @@ A message handler can be defined in two ways:
 
 If no handler is registered for a particular type of message, the message is discarded.
 
-## Storage buckets
+## Storage bucket
 
 Add a new disk to your `config/filesystems.php` file:
 

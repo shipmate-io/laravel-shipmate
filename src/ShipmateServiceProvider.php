@@ -13,9 +13,7 @@ class ShipmateServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        $package
-            ->name('laravel-shipmate')
-            ->hasConfigFile('shipmate');
+        $package->name('laravel-shipmate');
 
         MessageQueueServiceProvider::new($this->app)->configurePackage($package);
     }
@@ -24,7 +22,7 @@ class ShipmateServiceProvider extends PackageServiceProvider
     {
         $this->app->singleton(
             abstract: ShipmateConfig::class,
-            concrete: fn (Container $app) => new ShipmateConfig($app['config']->get('shipmate'))
+            concrete: fn (Container $app) => new ShipmateConfig($app['config']->get('services.shipmate', []))
         );
 
         JobQueueServiceProvider::new($this->app)->boot();

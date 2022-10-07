@@ -19,11 +19,11 @@ class ShipmateConfig
      */
     public function getEmail(): string
     {
-        $email = $this->config['credentials']['email'] ?? env('SHIPMATE_EMAIL');
+        $email = $this->config['email'] ?? env('SHIPMATE_EMAIL');
 
         if (! $email) {
             throw new ShipmateException(
-                'No value specified for the `email` parameter in the `config/shipmate.php` file.'
+                'No `email` specified in the Shipmate configuration in the `config/services.php` file.'
             );
         }
 
@@ -35,11 +35,11 @@ class ShipmateConfig
      */
     public function getKey(): array
     {
-        $key = $this->config['credentials']['key'] ?? env('SHIPMATE_KEY');
+        $key = $this->config['key'] ?? env('SHIPMATE_KEY');
 
         if (! $key) {
             throw new ShipmateException(
-                'No value specified for the `key` parameter in the `config/shipmate.php` file.'
+                'No `key` specified in the Shipmate configuration in the `config/services.php` file.'
             );
         }
 
@@ -47,7 +47,7 @@ class ShipmateConfig
 
         if (! is_array($decodedKey)) {
             throw new ShipmateException(
-                'The value specified for the `key` parameter in the `config/shipmate.php` file is not a valid key.'
+                'The `key` specified in the Shipmate configuration in the `config/services.php` file is not a valid key.'
             );
         }
 
@@ -59,11 +59,11 @@ class ShipmateConfig
      */
     public function getProjectId(): string
     {
-        $projectId = $this->config['credentials']['project_id'] ?? env('SHIPMATE_PROJECT_ID');
+        $projectId = $this->config['project_id'] ?? env('SHIPMATE_PROJECT_ID');
 
         if (! $projectId) {
             throw new ShipmateException(
-                'No value specified for the `project_id` parameter in the `config/shipmate.php` file.'
+                'No `project_id` specified in the Shipmate configuration in the `config/services.php` file.'
             );
         }
 
@@ -75,11 +75,11 @@ class ShipmateConfig
      */
     public function getRegionId(): string
     {
-        $regionId = $this->config['credentials']['region_id'] ?? env('SHIPMATE_REGION_ID');
+        $regionId = $this->config['region_id'] ?? env('SHIPMATE_REGION_ID');
 
         if (! $regionId) {
             throw new ShipmateException(
-                'No value specified for the `region_id` parameter in the `config/shipmate.php` file.'
+                'No `region_id` specified in the Shipmate configuration in the `config/services.php` file.'
             );
         }
 

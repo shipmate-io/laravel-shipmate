@@ -27,6 +27,7 @@ class MessageQueueServiceProvider extends ServiceProvider
     {
         $package
             ->hasRoutes('messages')
+            ->hasConfigFile('message-queue')
             ->hasCommand(ConnectMessageQueue::class)
             ->hasCommand(CreateMessageQueueSubscription::class)
             ->hasCommand(CreateMessageQueueTopic::class)
@@ -40,7 +41,7 @@ class MessageQueueServiceProvider extends ServiceProvider
     {
         $this->app->singleton(
             abstract: MessageQueueConfig::class,
-            concrete: fn (Container $app) => new MessageQueueConfig($app['config']->get('shipmate.message_queue'))
+            concrete: fn (Container $app) => new MessageQueueConfig($app['config']->get('message-queue'))
         );
 
         $this->app->singleton(

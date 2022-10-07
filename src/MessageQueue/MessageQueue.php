@@ -28,7 +28,10 @@ class MessageQueue
             'keyFile' => $this->shipmateConfig->getKey(),
         ];
 
-        if (env('PUBSUB_EMULATOR_HOST')) {
+        $emulatorHost = env('MESSAGE_QUEUE_EMULATOR_HOST');
+
+        if ($emulatorHost) {
+            putenv("PUBSUB_EMULATOR_HOST={$emulatorHost}");
             $options['transport'] = 'rest';
         }
 
