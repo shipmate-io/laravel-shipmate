@@ -23,16 +23,18 @@ class MessageQueue
         $this->shipmateConfig = ShipmateConfig::new();
         $this->messageQueueConfig = MessageQueueConfig::new();
 
-        $options = [
-            'projectId' => $this->shipmateConfig->getProjectId(),
-            'keyFile' => $this->shipmateConfig->getKey(),
-        ];
-
         $emulatorHost = env('MESSAGE_QUEUE_EMULATOR_HOST');
 
         if ($emulatorHost) {
             putenv("PUBSUB_EMULATOR_HOST={$emulatorHost}");
-            $options['transport'] = 'rest';
+            $options = [
+                'transport' => 'transport',
+            ];
+        } else {
+            $options = [
+                'projectId' => $this->shipmateConfig->getProjectId(),
+                'keyFile' => $this->shipmateConfig->getKey(),
+            ];
         }
 
         $this->googleClient = new GoogleClient($options);
