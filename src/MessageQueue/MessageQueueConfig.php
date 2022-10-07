@@ -25,7 +25,7 @@ class MessageQueueConfig
 
         if (! $topic) {
             throw new ShipmateException(
-                'No value specified for the `topic` parameter in the `message_queue` section of the `config/shipmate.php` file.'
+                'No value specified for the `topic` parameter in the `config/message-queue.php` file.'
             );
         }
 
@@ -41,7 +41,7 @@ class MessageQueueConfig
 
         if (! $subscription) {
             throw new ShipmateException(
-                'No value specified for the `subscription` parameter in the `message_queue` section of the `config/shipmate.php` file.'
+                'No value specified for the `subscription` parameter in the `config/message-queue.php` file.'
             );
         }
 
