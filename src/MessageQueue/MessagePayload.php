@@ -14,14 +14,24 @@ class MessagePayload
         return new self($items);
     }
 
-    public function serialize(): string
+    public function serialize(bool $encode = true): string
     {
-        return base64_encode(json_encode($this->items));
+        $serialization = json_encode($this->items);
+
+        if ($encode) {
+            $serialization = base64_encode($serialization);
+        }
+
+        return $serialization;
     }
 
-    public static function deserialize(string $serialization): static
+    public static function deserialize(string $serialization, bool $decode = true): static
     {
-        return new static(json_decode(base64_decode($serialization), true));
+        if ($decode) {
+            $serialization = base64_decode($serialization);
+        }
+
+        return new static(json_decode($serialization, true));
     }
 
     /**

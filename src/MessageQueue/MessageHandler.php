@@ -6,6 +6,7 @@ use Exception;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
+use Shipmate\LaravelShipmate\MessageQueue\Throttler\MessageThrottler;
 
 class MessageHandler
 {
@@ -21,13 +22,31 @@ class MessageHandler
 
     public function handle(Message $message): void
     {
+        $throttler = $this->instantiateThrottler();
+
+        if ($throttler?->shouldThrottle($message)) {
+            return;
+        }
+
         $className = $this->getClassName();
         $methodName = $this->getMethodName();
 
         app($className)->{$methodName}($message);
     }
 
-    public function getClassName(): string
+    private function instantiateThrottler(): ?MessageThrottler
+    {
+        $throttlerClass = MessageQueueConfig::new()->getMessageThrottler();
+
+        if (! $throttlerClass) {
+            return null;
+        }
+
+        /** @var MessageThrottler $throttler */
+        return app($throttlerClass);
+    }
+
+    private function getClassName(): string
     {
         if (is_array($this->messageHandler)) {
             return $this->messageHandler[0];
@@ -36,7 +55,7 @@ class MessageHandler
         return $this->messageHandler;
     }
 
-    public function getMethodName(): string
+    private function getMethodName(): string
     {
         if (is_array($this->messageHandler) && array_key_exists(1, $this->messageHandler)) {
             return $this->messageHandler[1];

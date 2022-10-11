@@ -39,8 +39,8 @@ class TestCase extends Orchestra
         config()->set('shipmate.email', 'john.doe@example.com');
         config()->set('shipmate.key', 'eyJzZWNyZXQiOnRydWV9');
 
-        config()->set('shipmate.message_queue.queue_connection', 'shipmate');
-        config()->set('shipmate.message_queue.message_handlers', __DIR__.'/MessageQueue/messages.php');
+        config()->set('message-queue.message_handlers', __DIR__.'/MessageQueue/messages.php');
+        config()->set('message-queue.message_throttler', null);
 
         /*
         $migration = include __DIR__.'/../database/migrations/create_laravel-shipmate_table.php.stub';

@@ -55,4 +55,28 @@ class MessageQueueConfig
     {
         return $this->config['message_handlers'] ?? base_path('routes/messages.php');
     }
+
+    /*
+     * The database table in which to store the received messages.
+     */
+    public function getMessageThrottler(): ?string
+    {
+        return $this->config['message_throttler'];
+    }
+
+    /*
+     * The database table in which to store the received messages.
+     */
+    public function getDatabaseMessageThrottlerTableName(): string
+    {
+        return $this->config['database_message_throttler']['table_name'] ?? 'messages';
+    }
+
+    /*
+     * The database table in which to store the received messages.
+     */
+    public function getDatabaseMessageThrottlerMaximumAttempts(): int
+    {
+        return $this->config['database_message_throttler']['maximum_attempts'] ?? 5;
+    }
 }

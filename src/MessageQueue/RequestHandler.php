@@ -11,19 +11,17 @@ class RequestHandler
 {
     public function __invoke(Request $request): Response
     {
+        // TODO: OpenId::new()->validateToken($request->bearerToken());
+
         try {
-            // TODO: OpenId::new()->validateToken($request->bearerToken());
+            $message = $this->parseMessage($request);
+        } catch (Exception) {
+            return new Response('Invalid message format.', 422);
+        }
 
-            $rawMessage = $request->get('message');
+        $messageHandler = MessageHandlers::new()->findHandlerForMessage($message);
 
-            $message = new Message(
-                id: $rawMessage['messageId'],
-                type: $rawMessage['attributes']['type'],
-                payload: MessagePayload::deserialize(base64_decode($rawMessage['data'])),
-            );
-
-            $messageHandler = MessageHandlers::new()->findHandlerForMessage($message);
-
+        try {
             $messageHandler?->handle($message);
         } catch (Exception $e) {
             Log::error($e);
@@ -32,5 +30,25 @@ class RequestHandler
         }
 
         return new Response;
+    }
+
+    private function parseMessage(Request $request): Message
+    {
+        $rawMessage = $request->get('message');
+
+        try {
+            $message = new Message(
+                id: $rawMessage['messageId'],
+                type: $rawMessage['attributes']['type'],
+                payload: MessagePayload::deserialize(base64_decode($rawMessage['data'])),
+            );
+        } catch (Exception $exception) {
+            $jsonEncodedMessage = json_encode($rawMessage ?? '');
+            Log::error("Invalid message received: `{$jsonEncodedMessage}`");
+            Log::debug($exception);
+            throw $exception;
+        }
+
+        return $message;
     }
 }

@@ -28,6 +28,7 @@ class MessageQueueServiceProvider extends ServiceProvider
         $package
             ->hasRoutes('messages')
             ->hasConfigFile('message-queue')
+            ->hasMigration('create_messages_table')
             ->hasCommand(ConnectMessageQueue::class)
             ->hasCommand(CreateMessageQueueSubscription::class)
             ->hasCommand(CreateMessageQueueTopic::class)

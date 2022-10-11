@@ -14,26 +14,32 @@ use Shipmate\LaravelShipmate\Tests\TestCase;
 class MessageHandlersTest extends TestCase
 {
     /** @test */
-    public function it_can_correctly_load_the_message_handlers_file(): void
+    public function it_can_get_the_messages_types_from_the_message_handlers_file(): void
     {
         $messageHandlers = MessageHandlers::new();
 
         $this->assertEquals(['user.created', 'user.deleted'], $messageHandlers->getMessageTypes());
+    }
 
+    /** @test */
+    public function it_can_call_the_correct_handler_from_the_message_handlers_file(): void
+    {
         $userCreatedMessage = new Message(Str::uuid()->toString(), 'user.created', MessagePayload::new());
-        $messageHandler = $messageHandlers->findHandlerForMessage($userCreatedMessage);
-        $this->assertInstanceOf(MessageHandler::class, $messageHandler);
-        $this->assertEquals(HandleUserCreated::class, $messageHandler->getClassName());
-        $this->assertEquals('__invoke', $messageHandler->getMethodName());
-
-        $userDeletedMessage = new Message(Str::uuid()->toString(), 'user.deleted', MessagePayload::new());
-        $messageHandler = $messageHandlers->findHandlerForMessage($userDeletedMessage);
-        $this->assertInstanceOf(MessageHandler::class, $messageHandler);
-        $this->assertEquals(HandleUserDeleted::class, $messageHandler->getClassName());
-        $this->assertEquals('handle', $messageHandler->getMethodName());
-
         $userUpdatedMessage = new Message(Str::uuid()->toString(), 'user.updated', MessagePayload::new());
-        $messageHandler = $messageHandlers->findHandlerForMessage($userUpdatedMessage);
-        $this->assertNull($messageHandler);
+        $userDeletedMessage = new Message(Str::uuid()->toString(), 'user.deleted', MessagePayload::new());
+
+        $userCreatedMessageHandler = MessageHandlers::new()->findHandlerForMessage($userCreatedMessage);
+        $userUpdatedMessageHandler = MessageHandlers::new()->findHandlerForMessage($userUpdatedMessage);
+        $userDeletedMessageHandler = MessageHandlers::new()->findHandlerForMessage($userDeletedMessage);
+
+        $this->assertInstanceOf(MessageHandler::class, $userCreatedMessageHandler);
+        $this->assertNull($userUpdatedMessageHandler);
+        $this->assertInstanceOf(MessageHandler::class, $userDeletedMessageHandler);
+
+        $this->makePartialMock(HandleUserCreated::class)->shouldReceive('__invoke')->once();
+        $this->makePartialMock(HandleUserDeleted::class)->shouldReceive('handle')->once();
+
+        $userCreatedMessageHandler->handle($userCreatedMessage);
+        $userDeletedMessageHandler->handle($userDeletedMessage);
     }
 }
