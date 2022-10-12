@@ -21,6 +21,7 @@
         "google/cloud-tasks": "^1.11",
         "illuminate/contracts": "^9.0",
         "league/flysystem-google-cloud-storage": "^3.3",
+        "phpseclib/phpseclib": "^2.0",
         "spatie/laravel-package-tools": "^1.13.0",
         "spatie/url": "^2.1"
     },

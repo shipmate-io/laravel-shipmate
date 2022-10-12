@@ -41,8 +41,14 @@ class JobQueueConfig
      */
     public function getWorkerUrl(): string
     {
-        $url = $this->config['worker_url'] ?? request()->getSchemeAndHttpHost();
+        $url = Url::fromString($this->config['worker_url'] ?? request()->getSchemeAndHttpHost());
 
-        return Url::fromString($url)->withPath('shipmate/handle-job');
+        if ($url->getScheme() === '') {
+            throw new ShipmateException(
+                'The value specified for the `worker_url` parameter in the `config/queue.php` file is not a valid URL.'
+            );
+        }
+
+        return $url->withPath('shipmate/handle-job');
     }
 }
