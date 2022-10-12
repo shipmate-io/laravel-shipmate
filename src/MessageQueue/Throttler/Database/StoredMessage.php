@@ -10,10 +10,6 @@ class StoredMessage extends Model
 {
     protected $guarded = [];
 
-    protected $casts = [
-        'payload' => 'array',
-    ];
-
     public function getTable(): string
     {
         return MessageQueueConfig::new()->getDatabaseMessageThrottlerTableName();

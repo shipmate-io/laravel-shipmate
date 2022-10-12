@@ -29,7 +29,7 @@ class DatabaseMessageThrottler implements MessageThrottler
         );
 
         $maximumAttempts = MessageQueueConfig::new()->getDatabaseMessageThrottlerMaximumAttempts();
-        $shouldThrottle = $storedMessage->getAttempts() <= $maximumAttempts;
+        $shouldThrottle = $storedMessage->getAttempts() > $maximumAttempts;
 
         if ($shouldThrottle) {
             $storedMessage->update([
