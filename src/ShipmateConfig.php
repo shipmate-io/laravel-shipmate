@@ -15,63 +15,63 @@ class ShipmateConfig
     }
 
     /**
-     * The service account email used to authenticate with Shipmate.
+     * The access ID used to authenticate with Shipmate.
      */
-    public function getEmail(): string
+    public function getAccessId(): string
     {
-        $email = $this->config['email'] ?? env('SHIPMATE_EMAIL');
+        $accessId = $this->config['access_id'] ?? env('SHIPMATE_ACCESS_ID');
 
-        if (! $email) {
+        if (! $accessId) {
             throw new ShipmateException(
-                'No `email` specified in the Shipmate configuration in the `config/services.php` file.'
+                'No `access_id` specified in the Shipmate configuration in the `config/services.php` file.'
             );
         }
 
-        return $email;
+        return $accessId;
     }
 
     /**
-     * The service account key used to authenticate with Shipmate.
+     * The access key used to authenticate with Shipmate.
      */
-    public function getKey(): array
+    public function getAccessKey(): array
     {
-        $key = $this->config['key'] ?? env('SHIPMATE_KEY');
+        $accessKey = $this->config['access_key'] ?? env('SHIPMATE_ACCESS_KEY');
 
-        if (! $key) {
+        if (! $accessKey) {
             throw new ShipmateException(
-                'No `key` specified in the Shipmate configuration in the `config/services.php` file.'
+                'No `access_key` specified in the Shipmate configuration in the `config/services.php` file.'
             );
         }
 
-        $decodedKey = json_decode(base64_decode($key), true);
+        $decodedAccessKey = json_decode(base64_decode($accessKey), true);
 
-        if (! is_array($decodedKey)) {
+        if (! is_array($decodedAccessKey)) {
             throw new ShipmateException(
-                'The `key` specified in the Shipmate configuration in the `config/services.php` file is not a valid key.'
+                'The `access_key` specified in the Shipmate configuration in the `config/services.php` file is not a valid key.'
             );
         }
 
-        return $decodedKey;
+        return $decodedAccessKey;
     }
 
     /**
-     * The id of the Google Cloud project under which the queue is created.
+     * The id of the Shipmate environment.
      */
-    public function getProjectId(): string
+    public function getEnvironmentId(): string
     {
-        $projectId = $this->config['project_id'] ?? env('SHIPMATE_PROJECT_ID');
+        $environmentId = $this->config['environment_id'] ?? env('SHIPMATE_ENVIRONMENT_ID');
 
-        if (! $projectId) {
+        if (! $environmentId) {
             throw new ShipmateException(
-                'No `project_id` specified in the Shipmate configuration in the `config/services.php` file.'
+                'No `environment_id` specified in the Shipmate configuration in the `config/services.php` file.'
             );
         }
 
-        return $projectId;
+        return $environmentId;
     }
 
     /**
-     * The name of the Google Cloud region where the queue is created.
+     * The id of the region in which the Shipmate environment is created.
      */
     public function getRegionId(): string
     {

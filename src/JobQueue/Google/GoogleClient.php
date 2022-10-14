@@ -23,8 +23,8 @@ class GoogleClient
         $this->shipmateConfig = ShipmateConfig::new();
 
         $this->client = new CloudTasksClient([
-            'projectId' => $this->shipmateConfig->getProjectId(),
-            'keyFile' => $this->shipmateConfig->getKey(),
+            'projectId' => $this->shipmateConfig->getEnvironmentId(),
+            'keyFile' => $this->shipmateConfig->getAccessKey(),
         ]);
     }
 
@@ -63,7 +63,7 @@ class GoogleClient
         $httpRequest->setBody($payload);
 
         $token = new OidcToken;
-        $token->setServiceAccountEmail($this->shipmateConfig->getEmail());
+        $token->setServiceAccountEmail($this->shipmateConfig->getAccessId());
         $httpRequest->setOidcToken($token);
 
         $task = $this->instantiateTask();
@@ -92,7 +92,7 @@ class GoogleClient
     private function generateQueueName(string $queueName): string
     {
         return $this->client->queueName(
-            project: $this->shipmateConfig->getProjectId(),
+            project: $this->shipmateConfig->getEnvironmentId(),
             location: $this->shipmateConfig->getRegionId(),
             queue: $queueName,
         );
@@ -101,7 +101,7 @@ class GoogleClient
     private function generateTaskName(string $queueName, string $taskName): string
     {
         return $this->client->taskName(
-            project: $this->shipmateConfig->getProjectId(),
+            project: $this->shipmateConfig->getEnvironmentId(),
             location: $this->shipmateConfig->getRegionId(),
             queue: $queueName,
             task: $taskName

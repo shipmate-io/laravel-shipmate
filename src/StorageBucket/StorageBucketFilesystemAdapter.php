@@ -19,8 +19,8 @@ class StorageBucketFilesystemAdapter extends FilesystemAdapter
         $shipmateConfig = ShipmateConfig::new();
 
         $this->googleClient = new GoogleClient([
-            'keyFile' => $shipmateConfig->getKey(),
-            'projectId' => $shipmateConfig->getProjectId(),
+            'keyFile' => $shipmateConfig->getAccessKey(),
+            'projectId' => $shipmateConfig->getEnvironmentId(),
         ]);
 
         $adapter = new GoogleFilesystemAdapter(

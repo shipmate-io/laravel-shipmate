@@ -19,9 +19,9 @@ To enter the credentials used to authenticate with Shipmate, add the following c
 
 ```php
 'shipmate' => [
-    'email' => env('SHIPMATE_EMAIL'),
-    'key' => env('SHIPMATE_KEY'),
-    'project_id' => env('SHIPMATE_PROJECT_ID'),
+    'access_id' => env('SHIPMATE_ACCESS_ID'),
+    'access_key' => env('SHIPMATE_ACCESS_KEY'),
+    'environment_id' => env('SHIPMATE_ENVIRONMENT_ID'),
     'region_id' => env('SHIPMATE_REGION_ID'),
 ],
 ```

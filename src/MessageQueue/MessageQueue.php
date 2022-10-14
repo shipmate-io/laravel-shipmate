@@ -32,8 +32,8 @@ class MessageQueue
             ];
         } else {
             $options = [
-                'projectId' => $this->shipmateConfig->getProjectId(),
-                'keyFile' => $this->shipmateConfig->getKey(),
+                'projectId' => $this->shipmateConfig->getEnvironmentId(),
+                'keyFile' => $this->shipmateConfig->getAccessKey(),
             ];
         }
 
