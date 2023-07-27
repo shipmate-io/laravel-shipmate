@@ -3,52 +3,32 @@
 namespace Shipmate\LaravelShipmate\StorageBucket;
 
 use Google\Cloud\Storage\Connection\Rest;
-use Google\Cloud\Storage\StorageClient as GoogleClient;
 use Illuminate\Filesystem\FilesystemAdapter;
 use League\Flysystem\Filesystem as FilesystemDriver;
-use League\Flysystem\GoogleCloudStorage\GoogleCloudStorageAdapter as GoogleFilesystemAdapter;
-use Shipmate\LaravelShipmate\ShipmateConfig;
+use Shipmate\Shipmate\StorageBucket\StorageBucketFilesystemAdapter as PhpAdapter;
 
 class StorageBucketFilesystemAdapter extends FilesystemAdapter
 {
-    protected GoogleClient $googleClient;
+    private PhpAdapter $phpAdapter;
 
     public function __construct(
         protected StorageBucketConfig $storageBucketConfig,
     ) {
-        $shipmateConfig = ShipmateConfig::new();
-
-        $this->googleClient = new GoogleClient([
-            'keyFile' => $shipmateConfig->getAccessKey(),
-            'projectId' => $shipmateConfig->getEnvironmentId(),
-        ]);
-
-        $adapter = new GoogleFilesystemAdapter(
-            bucket: $this->googleClient->bucket($storageBucketConfig->getBucketName()),
-            prefix: $storageBucketConfig->getPathPrefix(),
-            visibilityHandler: null,
-            defaultVisibility: $storageBucketConfig->getVisibility(),
+        $this->phpAdapter = new PhpAdapter(
+            bucketName: $storageBucketConfig->getBucketName(),
+            visibility: $storageBucketConfig->getVisibility(),
         );
-
-        $filesystemConfig = [
-            'root' => $storageBucketConfig->getPathPrefix(),
-        ];
 
         $driver = new FilesystemDriver(
-            adapter: $adapter,
-            config: $filesystemConfig
+            adapter: $this->phpAdapter,
+            config: []
         );
 
-        parent::__construct($driver, $adapter, $filesystemConfig);
+        parent::__construct($driver, $this->phpAdapter);
     }
 
     /**
      * Get the URL for the file at the given path.
-     *
-     * @param  string  $path
-     * @return string
-     *
-     * @throws \RuntimeException
      */
     public function url($path): string
     {
@@ -63,11 +43,6 @@ class StorageBucketFilesystemAdapter extends FilesystemAdapter
 
     /**
      * Get a temporary URL for the file at the given path.
-     *
-     * @param  string  $path
-     * @param  \DateTimeInterface  $expiration
-     * @param  array  $options
-     * @return string
      */
     public function temporaryUrl($path, $expiration, array $options = []): string
     {
@@ -75,6 +50,10 @@ class StorageBucketFilesystemAdapter extends FilesystemAdapter
 
         $fullPath = $this->prefixer->prefixPath($path);
 
-        return $this->googleClient->bucket($bucketName)->object($fullPath)->signedUrl($expiration, $options);
+        return $this->phpAdapter
+            ->getGoogleClient()
+            ->bucket($bucketName)
+            ->object($fullPath)
+            ->signedUrl($expiration, $options);
     }
 }

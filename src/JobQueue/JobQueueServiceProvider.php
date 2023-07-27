@@ -17,7 +17,7 @@ class JobQueueServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerQueueConnector();
-        $this->registerRequestHandler();
+        $this->registerController();
     }
 
     private function registerQueueConnector(): void
@@ -28,11 +28,11 @@ class JobQueueServiceProvider extends ServiceProvider
         $queue->addConnector('shipmate', fn () => new JobQueueConnector);
     }
 
-    private function registerRequestHandler(): void
+    private function registerController(): void
     {
         /** @var Router $router */
         $router = $this->app['router'];
 
-        $router->post('shipmate/handle-job', RequestHandler::class);
+        $router->post('shipmate/handle-job', [JobQueueController::class, 'handleJob']);
     }
 }

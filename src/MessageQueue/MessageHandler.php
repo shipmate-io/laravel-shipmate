@@ -6,44 +6,26 @@ use Exception;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
-use Shipmate\LaravelShipmate\MessageQueue\Throttler\MessageThrottler;
+use Shipmate\Shipmate\MessageQueue\Message;
 
 class MessageHandler
 {
     public function __construct(
-        private string | array $messageHandler
+        private string|array $messageHandler
     ) {
     }
 
-    public static function new(string | array $messageHandler): static
+    public static function new(string|array $messageHandler): static
     {
         return new static($messageHandler);
     }
 
     public function handle(Message $message): void
     {
-        $throttler = $this->instantiateThrottler();
-
-        if ($throttler?->shouldThrottle($message)) {
-            return;
-        }
-
         $className = $this->getClassName();
         $methodName = $this->getMethodName();
 
         app($className)->{$methodName}($message);
-    }
-
-    private function instantiateThrottler(): ?MessageThrottler
-    {
-        $throttlerClass = MessageQueueConfig::new()->getMessageThrottler();
-
-        if (! $throttlerClass) {
-            return null;
-        }
-
-        /** @var MessageThrottler $throttler */
-        return app($throttlerClass);
     }
 
     private function getClassName(): string

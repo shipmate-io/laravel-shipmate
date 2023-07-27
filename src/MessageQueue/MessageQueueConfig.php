@@ -2,7 +2,7 @@
 
 namespace Shipmate\LaravelShipmate\MessageQueue;
 
-use Shipmate\LaravelShipmate\ShipmateException;
+use Shipmate\Shipmate\ShipmateException;
 
 class MessageQueueConfig
 {
@@ -19,33 +19,17 @@ class MessageQueueConfig
     /*
      * The topic that is used to publish messages.
      */
-    public function getDefaultTopic(): string
+    public function getMessageQueueName(string $queue): string
     {
-        $topic = $this->config['topic'] ?? null;
+        $queues = $this->config['queues'] ?? [];
 
-        if (! $topic) {
+        if (! array_key_exists($queue, $queues)) {
             throw new ShipmateException(
-                'No value specified for the `topic` parameter in the `config/message-queue.php` file.'
+                "Unknown message queue `{$queue}`."
             );
         }
 
-        return $topic;
-    }
-
-    /*
-     * The subscription for which to receive messages.
-     */
-    public function getDefaultSubscription(): string
-    {
-        $subscription = $this->config['subscription'] ?? null;
-
-        if (! $subscription) {
-            throw new ShipmateException(
-                'No value specified for the `subscription` parameter in the `config/message-queue.php` file.'
-            );
-        }
-
-        return $subscription;
+        return $queues[$queue];
     }
 
     /*
@@ -57,26 +41,10 @@ class MessageQueueConfig
     }
 
     /*
-     * The database table in which to store the received messages.
+     * Whether to register the routes required to handle the messages from the message queues.
      */
-    public function getMessageThrottler(): ?string
+    public function registerRoutes(): bool
     {
-        return $this->config['message_throttler'];
-    }
-
-    /*
-     * The database table in which to store the received messages.
-     */
-    public function getDatabaseMessageThrottlerTableName(): string
-    {
-        return $this->config['database_message_throttler']['table_name'] ?? 'messages';
-    }
-
-    /*
-     * The database table in which to store the received messages.
-     */
-    public function getDatabaseMessageThrottlerMaximumAttempts(): int
-    {
-        return $this->config['database_message_throttler']['maximum_attempts'] ?? 5;
+        return $this->config['register_routes'] ?? true;
     }
 }

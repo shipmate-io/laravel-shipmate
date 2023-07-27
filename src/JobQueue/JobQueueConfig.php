@@ -2,8 +2,7 @@
 
 namespace Shipmate\LaravelShipmate\JobQueue;
 
-use Shipmate\LaravelShipmate\ShipmateException;
-use Spatie\Url\Url;
+use Shipmate\Shipmate\ShipmateException;
 
 class JobQueueConfig
 {
@@ -20,35 +19,50 @@ class JobQueueConfig
     }
 
     /**
-     * The name of the queue.
+     * Get the alias of the default queue.
      */
-    public function getQueueName(): string
+    public function getDefaultQueue(): string
     {
-        $queueName = $this->config['queue'] ?? null;
+        $defaultQueue = $this->config['default_queue'] ?? null;
 
-        if (! $queueName) {
+        if (! $defaultQueue) {
             throw new ShipmateException(
-                'No value specified for the `queue` parameter in the `config/queue.php` file.'
+                'No `default_queue` specified on the Shipmate connection in the `config/queue.php` file.'
             );
         }
 
-        return $queueName;
+        return $defaultQueue;
     }
 
     /**
-     * The URL of the background worker that is consuming the queue. If no value is specified, the URL of the current
-     * service is used.
+     * Get the name of the queue.
      */
-    public function getWorkerUrl(): string
+    public function getJobQueueName(string $queue): string
     {
-        $url = Url::fromString($this->config['worker_url'] ?? request()->getSchemeAndHttpHost());
+        $jobQueueName = $this->config['queues'][$queue]['name'] ?? null;
 
-        if ($url->getScheme() === '') {
+        if (! $jobQueueName) {
             throw new ShipmateException(
-                'The value specified for the `worker_url` parameter in the `config/queue.php` file is not a valid URL.'
+                "No name found for queue `{$queue}` on the Shipmate connection in the `config/queue.php` file."
             );
         }
 
-        return $url->withPath('shipmate/handle-job');
+        return $jobQueueName;
+    }
+
+    /**
+     * Get the url of the background worker that is consuming the queue.
+     */
+    public function getJobQueueWorkerUrl(string $queue): string
+    {
+        $jobQueueWorkerUrl = $this->config['queues'][$queue]['worker_url'] ?? null;
+
+        if ($jobQueueWorkerUrl) {
+            throw new ShipmateException(
+                "No worker url found for queue `{$queue}` on the Shipmate connection in the `config/queue.php` file."
+            );
+        }
+
+        return $jobQueueWorkerUrl;
     }
 }

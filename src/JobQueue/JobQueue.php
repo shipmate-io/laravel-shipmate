@@ -2,92 +2,106 @@
 
 namespace Shipmate\LaravelShipmate\JobQueue;
 
-use DateInterval;
-use DateTimeInterface;
-use Illuminate\Contracts\Queue\Job;
-use Illuminate\Contracts\Queue\Queue as QueueContract;
-use Illuminate\Queue\Queue as LaravelQueue;
-use Shipmate\LaravelShipmate\JobQueue\Google\GoogleClient;
+use Google\Cloud\Tasks\V2\Attempt;
+use Google\Cloud\Tasks\V2\RetryConfig;
+use Google\Protobuf\Duration;
+use Google\Protobuf\Timestamp;
+use Shipmate\Shipmate\JobQueue\JobQueue as PhpJobQueue;
+use Shipmate\Shipmate\ShipmateException;
 
-class JobQueue extends LaravelQueue implements QueueContract
+class JobQueue extends PhpJobQueue
 {
-    public function __construct(
-        private GoogleClient $googleClient,
-        private JobQueueConfig $jobQueueConfig,
-    ) {
-    }
-
-    /**
-     * Get the size of the queue.
-     *
-     * Google Cloud Tasks doesn't support retrieving the size of the queue, so we simply return 0.
-     *
-     * @param  string|null  $queue
-     */
-    public function size($queue = null): int
+    public static function parseJob(string $requestPayload): Job
     {
-        return 0;
-    }
+        $phpJob = parent::parseJob($requestPayload);
 
-    /**
-     * Push a new job onto the queue.
-     *
-     * @param  string|object  $job
-     * @param  string|null  $queue
-     */
-    public function push($job, $data = '', $queue = null): void
-    {
-        $queueName = $queue ?: $this->jobQueueConfig->getQueueName();
-
-        $this->googleClient->createJob(
-            queueName: $queueName,
-            payload: $this->createPayload($job, $queueName, $data),
-            availableAt: $this->availableAt()
+        return new Job(
+            payload: $phpJob->payload
         );
     }
 
-    /**
-     * Push a raw payload onto the queue.
-     *
-     * @param  string  $payload
-     * @param  string|null  $queue
-     */
-    public function pushRaw($payload, $queue = null, array $options = []): void
-    {
-        $queueName = $queue ?: $this->jobQueueConfig->getQueueName();
+    // Queues
 
-        $this->googleClient->createJob(
-            queueName: $queueName,
-            payload: $payload,
-            availableAt: $this->availableAt()
+    public function getMaxTries(): int
+    {
+        $fullyQualifiedQueueName = $this->generateQueueName();
+
+        $queue = $this->googleClient->getQueue($fullyQualifiedQueueName);
+
+        $retryConfig = $queue->getRetryConfig();
+
+        if (! $retryConfig instanceof RetryConfig) {
+            throw new ShipmateException('Queue does not have a retry config.');
+        }
+
+        $maxTries = $retryConfig->getMaxAttempts();
+
+        return $maxTries === -1 ? 0 : $maxTries;
+    }
+
+    // Jobs
+
+    public function getRetryDeadlineOfJob(string $jobName): ?int
+    {
+        $fullyQualifiedTaskName = $this->generateTaskName($jobName);
+
+        $task = $this->googleClient->getTask($fullyQualifiedTaskName);
+
+        $attempt = $task->getFirstAttempt();
+
+        if (! $attempt instanceof Attempt) {
+            return null;
+        }
+
+        $fullyQualifiedQueueName = $this->generateQueueName();
+
+        $queue = $this->googleClient->getQueue($fullyQualifiedQueueName);
+
+        $retryConfig = $queue->getRetryConfig();
+
+        if (! $retryConfig instanceof RetryConfig) {
+            throw new ShipmateException('Queue does not have a retry config.');
+        }
+
+        $maxRetryDuration = $retryConfig->getMaxRetryDuration();
+        $dispatchTime = $attempt->getDispatchTime();
+
+        if (! $maxRetryDuration instanceof Duration || ! $dispatchTime instanceof Timestamp) {
+            return null;
+        }
+
+        $maxDurationInSeconds = (int) $maxRetryDuration->getSeconds();
+
+        $firstAttemptTimestamp = $dispatchTime->toDateTime()->getTimestamp();
+
+        return $firstAttemptTimestamp + $maxDurationInSeconds;
+    }
+
+    public function deleteJob(string $jobName): void
+    {
+        $fullyQualifiedTaskName = $this->generateTaskName($jobName);
+
+        $this->googleClient->deleteTask($fullyQualifiedTaskName);
+    }
+
+    // Helpers
+
+    private function generateQueueName(): string
+    {
+        return $this->googleClient->queueName(
+            project: $this->shipmateConfig->getEnvironmentId(),
+            location: $this->shipmateConfig->getRegionId(),
+            queue: $this->name,
         );
     }
 
-    /**
-     * Push a new job onto the queue after a delay.
-     *
-     * @param  DateTimeInterface|DateInterval|int  $delay
-     * @param  string|object  $job
-     * @param  string|null  $queue
-     */
-    public function later($delay, $job, $data = '', $queue = null): void
+    private function generateTaskName(string $taskName): string
     {
-        $queueName = $queue ?: $this->jobQueueConfig->getQueueName();
-
-        $this->googleClient->createJob(
-            queueName: $queueName,
-            payload: $this->createPayload($job, $queueName, $data),
-            availableAt: $this->availableAt($delay)
+        return $this->googleClient->taskName(
+            project: $this->shipmateConfig->getEnvironmentId(),
+            location: $this->shipmateConfig->getRegionId(),
+            queue: $this->name,
+            task: $taskName
         );
-    }
-
-    /**
-     * Pop the next job off of the queue.
-     *
-     * @param  string|null  $queue
-     */
-    public function pop($queue = null): ?Job
-    {
-        return null;
     }
 }
