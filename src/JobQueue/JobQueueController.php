@@ -17,6 +17,7 @@ class JobQueueController
 
         JobHandler::new()->handle(
             job: $job,
+            bearerToken: $request->bearerToken(),
         );
 
         return new Response;

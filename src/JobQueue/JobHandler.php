@@ -13,7 +13,7 @@ class JobHandler
         return app(static::class);
     }
 
-    public function handle(Job $job): void
+    public function handle(Job $job, string $bearerToken): void
     {
         $connection = $job->getConnection() ?? config('queue.default');
 
@@ -25,6 +25,8 @@ class JobHandler
             name: $jobQueueConfig->getJobQueueName($queue),
             workerUrl: $jobQueueConfig->getJobQueueWorkerUrl($queue),
         );
+
+        $jobQueue->authenticateRequest($bearerToken);
 
         $retryUntil = $this->getRetryUntil($jobQueue, $job);
 

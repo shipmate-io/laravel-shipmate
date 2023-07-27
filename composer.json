@@ -17,7 +17,7 @@
     ],
     "require": {
         "php": "^8.0",
-        "shipmate-io/shipmate": "^0.1.1",
+        "shipmate-io/shipmate": "^0.1.2",
         "illuminate/contracts": "^9.0",
         "spatie/laravel-package-tools": "^1.13.0"
     },
