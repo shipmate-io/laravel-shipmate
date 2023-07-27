@@ -1,11 +1,4 @@
-# Fully managed microservice hosting for Laravel
-
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/shipmate-io/laravel-shipmate.svg?style=flat-square)](https://packagist.org/packages/shipmate-io/laravel-shipmate)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/shipmate-io/laravel-shipmate/run-tests?label=tests)](https://github.com/shipmate-io/laravel-shipmate/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/shipmate-io/laravel-shipmate/Fix%20PHP%20code%20style%20issues?label=code%20style)](https://github.com/shipmate-io/laravel-shipmate/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/shipmate-io/laravel-shipmate.svg?style=flat-square)](https://packagist.org/packages/shipmate-io/laravel-shipmate)
-
-Shipmate is a fully managed hosting platform that eliminates the complexity of shipping microservice apps. This package contains everything you need to make your Laravel microservice run smoothly on Shipmate. To learn more about Shipmate and how to use this package, please consult the official documentation.
+# Interact with Shipmate from your Laravel code
 
 ## Installation
 
@@ -15,17 +8,6 @@ You can install the package via composer:
 composer require shipmate-io/laravel-shipmate
 ```
 
-To enter the credentials used to authenticate with Shipmate, add the following code snippet to your service's `config/services.php` file:
-
-```php
-'shipmate' => [
-    'access_id' => env('SHIPMATE_ACCESS_ID'),
-    'access_key' => env('SHIPMATE_ACCESS_KEY'),
-    'environment_id' => env('SHIPMATE_ENVIRONMENT_ID'),
-    'region_id' => env('SHIPMATE_REGION_ID'),
-],
-```
-
 ## Job queue
 
 Add a new queue connection to your `config/queue.php` file:
@@ -33,8 +15,13 @@ Add a new queue connection to your `config/queue.php` file:
 ```php
 'shipmate' => [
     'driver' => 'shipmate',
-    'queue' => env('QUEUE_NAME'),
-    'worker_url' => env('QUEUE_WORKER_URL'),
+    'default_queue' => 'default',
+    'queues' => [
+        'default' => [
+            'name' => env('SHIPMATE_DEFAULT_JOB_QUEUE_NAME'),
+            'worker_url' => env('SHIPMATE_DEFAULT_JOB_QUEUE_WORKER_URL'),
+        ],
+    ],
 ],
 ```
 
@@ -52,19 +39,21 @@ The message queue are configured in the `config/message-queue.php` file.
 return [
 
     /*
-     * The name of the default message queue topic that is used to publish messages.
+     * The message queues that are available to your service.
      */
-    'topic' => env('MESSAGE_QUEUE_TOPIC'),
-
-    /*
-     * The name of the default message queue subscription that is used to receive messages.
-     */
-    'subscription' => env('MESSAGE_QUEUE_SUBSCRIPTION'),
+    'queues' => [
+        'default' => env('SHIPMATE_DEFAULT_MESSAGE_QUEUE_NAME'),
+    ],
 
     /*
      * The file within your code base that defines your message handlers.
      */
     'message_handlers' => base_path('routes/messages.php'),
+
+    /*
+     * Whether to register the routes required to handle the messages from the message queues.
+     */
+    'register_routes' => true,
 
 ];
 ```
@@ -82,6 +71,11 @@ use Shipmate\LaravelShipmate\MessageQueue\ShouldPublish;
 
 class UserCreated implements ShouldPublish
 {
+    public function publishOn(): string
+    {
+        return 'default';
+    }
+
     public function publishAs(): string
     {
         return 'user.created';
@@ -103,14 +97,15 @@ To publish a message to the message queue, you can dispatch it using Laravel's e
 event(new UserCreated);
 ```
 
-The message queue delivers this message to the other microservices in your application as an HTTP request. To accept
-this request, the package automatically registers the following route in your microservice.
+The message queue delivers this message to the other services in your application as an HTTP request. To accept
+this request, the package automatically registers the following routes in your service.
 
 ```php
-Route::post('shipmate/handle-message', Shipmate\LaravelShipmate\MessageQueue\RequestHandler::class);
+Route::post('shipmate/handle-message', [Shipmate\LaravelShipmate\MessageQueue\MessageQueueController::class, 'handleMessage']);
+Route::post('shipmate/handle-failed-message', [Shipmate\LaravelShipmate\MessageQueue\MessageQueueController::class, 'handleFailedMessage']);
 ```
 
-Next, the package looks in the `routes/messages.php` file of your microservice for a handler that corresponds with the
+Next, the package looks in the `routes/messages.php` file of your service for a handler that corresponds with the
 type of the message. The contents of the file should look like this:
 
 ```php
@@ -125,7 +120,7 @@ return [
 ];
 ```
 
-The file returns an associative array in which:
+The file must return an associative array in which:
 - **a key** is the message type that the application wants to receive
 - **a value** is the class within your application that handles the incoming message of this type
 
@@ -137,17 +132,17 @@ A message handler can be defined in two ways:
     'user.created' => HandleUserCreatedMessage::class,
     ```
 
-   In this case, the package looks for a public method in the class that accepts a `Shipmate\LaravelShipmate\MessageQueue\Message`
+   In this case, the package looks for a public method in the class that accepts a `Shipmate\Shipmate\MessageQueue\Message`
    as argument. This method can be called anything, as shown here:
 
     ```php
-    use Shipmate\LaravelShipmate\MessageQueue\Message;
+    use Shipmate\Shipmate\MessageQueue\Message;
    
     class HandleUserCreatedMessage
     {
         public function __invoke(Message $message): void
         {
-            $firstName = $message->payload->get('first_name');
+            $firstName = $message->payload['first_name'];
    
             //
         }
@@ -157,7 +152,7 @@ A message handler can be defined in two ways:
     {
         public function handle(Message $message): void
         {
-            $firstName = $message->payload->get('first_name');
+            $firstName = $message->payload['first_name'];
    
             //
         }
@@ -167,7 +162,7 @@ A message handler can be defined in two ways:
     {
         public function execute(Message $message): void
         {
-            $firstName = $message->payload->get('first_name');
+            $firstName = $message->payload['first_name'];
    
             //
         }
@@ -190,7 +185,6 @@ Add a new disk to your `config/filesystems.php` file:
 'shipmate' => [
     'driver' => 'shipmate',
     'bucket' => env('STORAGE_BUCKET_NAME'),
-    'path_prefix' => env('STORAGE_BUCKET_PATH_PREFIX', ''), // e.g. /path/in/bucket
     'visibility' => 'public', // public or private
 ],
 ```
@@ -215,19 +209,6 @@ See [https://laravel.com/docs/master/filesystem](https://laravel.com/docs/master
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
-
-## Credits
-
-- [Shipmate](https://github.com/shipmate-io)
-- [All Contributors](../../contributors)
 
 ## License
 

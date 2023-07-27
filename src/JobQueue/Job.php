@@ -2,70 +2,59 @@
 
 namespace Shipmate\LaravelShipmate\JobQueue;
 
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Queue\Job as JobContract;
-use Illuminate\Queue\Jobs\Job as LaravelJob;
-use Shipmate\LaravelShipmate\JobQueue\Google\GoogleClient;
+use Shipmate\Shipmate\JobQueue\Job as PhpJob;
 
-class Job extends LaravelJob implements JobContract
+class Job extends PhpJob
 {
-    public function __construct(
-        protected GoogleClient $googleClient,
-        protected JobPayload $jobPayload,
-        protected string $jobName,
-        protected int $attempts,
-        protected int $maxTries,
-        protected ?int $retryUntil,
-        protected $connectionName,
-        protected $queue,
-    ) {
-        $this->container = Container::getInstance();
-    }
+    private ?string $name;
 
-    public function getJobId(): string
+    private ?int $attempts;
+
+    public function getName(): ?string
     {
-        return $this->jobPayload->getId();
+        return $this->name;
     }
 
-    public function uuid(): string
+    public function setName(?string $name): self
     {
-        return $this->jobPayload->getId();
+        $this->name = $name;
+
+        return $this;
     }
 
-    public function getRawBody(): string
-    {
-        return $this->jobPayload->toJson();
-    }
-
-    public function attempts(): ?int
+    public function getAttempts(): ?int
     {
         return $this->attempts;
     }
 
-    public function maxTries(): ?int
+    public function setAttempts(?int $attempts): self
     {
-        return $this->maxTries;
+        $this->attempts = $attempts;
+
+        return $this;
     }
 
-    public function retryUntil(): ?int
+    public function getId(): string
     {
-        return $this->retryUntil;
+        return $this->payload['uuid'];
     }
 
-    public function delete(): void
+    public function getConnection(): ?string
     {
-        parent::delete();
+        $command = unserialize($this->payload['data']['command']);
 
-        $this->googleClient->deleteJob(
-            queueName: $this->queue,
-            jobName: $this->jobName,
-        );
+        return $command->connection ?? null;
     }
 
-    public function fire(): void
+    public function getQueue(): ?string
     {
-        $this->attempts++;
+        $command = unserialize($this->payload['data']['command']);
 
-        parent::fire();
+        return $command->queue ?? null;
+    }
+
+    public function toJson(): string
+    {
+        return json_encode($this->payload);
     }
 }

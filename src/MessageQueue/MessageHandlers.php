@@ -4,6 +4,7 @@ namespace Shipmate\LaravelShipmate\MessageQueue;
 
 use Exception;
 use Illuminate\Support\Collection;
+use Shipmate\Shipmate\MessageQueue\Message;
 use Throwable;
 
 class MessageHandlers
@@ -30,11 +31,6 @@ class MessageHandlers
     public static function new(): self
     {
         return app(self::class);
-    }
-
-    public function getMessageTypes(): array
-    {
-        return $this->messageHandlers->keys()->all();
     }
 
     public function findHandlerForMessage(Message $message): ?MessageHandler

@@ -2,24 +2,18 @@
 
 namespace Shipmate\LaravelShipmate\JobQueue;
 
-use Illuminate\Contracts\Queue\Queue;
+use Illuminate\Contracts\Queue\Queue as IlluminateQueue;
 use Illuminate\Queue\Connectors\ConnectorInterface;
-use Shipmate\LaravelShipmate\JobQueue\Google\GoogleClient;
 
 class JobQueueConnector implements ConnectorInterface
 {
     /**
      * Establish a queue connection.
      */
-    public function connect(array $config): Queue
+    public function connect(array $config): IlluminateQueue
     {
-        $jobQueueConfig = new JobQueueConfig($config);
-
-        return new JobQueue(
-            googleClient: new GoogleClient(
-                jobQueueConfig: $jobQueueConfig,
-            ),
-            jobQueueConfig: $jobQueueConfig,
+        return new Queue(
+            jobQueueConfig: new JobQueueConfig($config),
         );
     }
 }

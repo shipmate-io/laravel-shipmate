@@ -2,7 +2,6 @@
 
 namespace Shipmate\LaravelShipmate;
 
-use Illuminate\Container\Container;
 use Shipmate\LaravelShipmate\JobQueue\JobQueueServiceProvider;
 use Shipmate\LaravelShipmate\MessageQueue\MessageQueueServiceProvider;
 use Shipmate\LaravelShipmate\StorageBucket\StorageBucketServiceProvider;
@@ -20,11 +19,6 @@ class ShipmateServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        $this->app->singleton(
-            abstract: ShipmateConfig::class,
-            concrete: fn (Container $app) => new ShipmateConfig($app['config']->get('services.shipmate', []))
-        );
-
         JobQueueServiceProvider::new($this->app)->boot();
         MessageQueueServiceProvider::new($this->app)->boot();
         StorageBucketServiceProvider::new($this->app)->boot();

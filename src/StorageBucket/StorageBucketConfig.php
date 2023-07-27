@@ -3,7 +3,7 @@
 namespace Shipmate\LaravelShipmate\StorageBucket;
 
 use League\Flysystem\Visibility;
-use Shipmate\LaravelShipmate\ShipmateException;
+use Shipmate\Shipmate\ShipmateException;
 
 class StorageBucketConfig
 {
@@ -28,11 +28,6 @@ class StorageBucketConfig
         }
 
         return $bucketName;
-    }
-
-    public function getPathPrefix(): string
-    {
-        return $this->config['path_prefix'] ?? '';
     }
 
     public function getVisibility(): string

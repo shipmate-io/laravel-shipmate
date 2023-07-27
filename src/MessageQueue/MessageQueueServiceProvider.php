@@ -7,13 +7,8 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Shipmate\LaravelShipmate\MessageQueue\Commands\ConnectMessageQueue;
-use Shipmate\LaravelShipmate\MessageQueue\Commands\CreateMessageQueueSubscription;
-use Shipmate\LaravelShipmate\MessageQueue\Commands\CreateMessageQueueTopic;
-use Shipmate\LaravelShipmate\MessageQueue\Commands\DeleteMessageQueueSubscription;
-use Shipmate\LaravelShipmate\MessageQueue\Commands\DeleteMessageQueueTopic;
-use Shipmate\LaravelShipmate\MessageQueue\Commands\ListMessageQueueSubscriptions;
-use Shipmate\LaravelShipmate\MessageQueue\Commands\ListMessageQueueTopics;
+use Shipmate\Shipmate\MessageQueue\Message;
+use Shipmate\Shipmate\MessageQueue\MessageQueue;
 use Spatie\LaravelPackageTools\Package;
 
 class MessageQueueServiceProvider extends ServiceProvider
@@ -26,16 +21,8 @@ class MessageQueueServiceProvider extends ServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->hasRoutes('messages')
             ->hasConfigFile('message-queue')
-            ->hasMigration('create_messages_table')
-            ->hasCommand(ConnectMessageQueue::class)
-            ->hasCommand(CreateMessageQueueSubscription::class)
-            ->hasCommand(CreateMessageQueueTopic::class)
-            ->hasCommand(DeleteMessageQueueSubscription::class)
-            ->hasCommand(DeleteMessageQueueTopic::class)
-            ->hasCommand(ListMessageQueueSubscriptions::class)
-            ->hasCommand(ListMessageQueueTopics::class);
+            ->hasRoutes('messages');
     }
 
     public function boot(): void
@@ -45,33 +32,42 @@ class MessageQueueServiceProvider extends ServiceProvider
             concrete: fn (Container $app) => new MessageQueueConfig($app['config']->get('message-queue'))
         );
 
-        $this->app->singleton(
-            abstract: MessageQueue::class,
-            concrete: fn (Container $app) => new MessageQueue
-        );
+        $config = MessageQueueConfig::new();
 
-        $this->registerEventListener();
-        $this->registerRequestHandler();
+        $this->registerEventListener($config);
+        $this->registerController($config);
     }
 
-    private function registerEventListener(): void
+    private function registerEventListener(MessageQueueConfig $config): void
     {
-        Event::listen('*', function (string $eventName, array $data): void {
+        Event::listen('*', function (string $eventName, array $data) use ($config): void {
             $event = $data[0];
 
             if (! $event instanceof ShouldPublish) {
                 return;
             }
 
-            MessageQueue::new()->publishMessage($event);
+            $message = new Message(
+                type: $event->publishAs(),
+                payload: $event->publishWith()
+            );
+
+            $messageQueue = new MessageQueue(
+                name: $config->getMessageQueueName($event->publishOn()),
+            );
+
+            $messageQueue->publishMessage($message);
         });
     }
 
-    private function registerRequestHandler(): void
+    private function registerController(MessageQueueConfig $config): void
     {
         /** @var Router $router */
         $router = $this->app['router'];
 
-        $router->post('shipmate/handle-message', RequestHandler::class);
+        if ($config->registerRoutes()) {
+            $router->post('shipmate/handle-message', [MessageQueueController::class, 'handleMessage']);
+            $router->post('shipmate/handle-failed-message', [MessageQueueController::class, 'handleFailedMessage']);
+        }
     }
 }
