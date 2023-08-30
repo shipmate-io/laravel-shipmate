@@ -10,6 +10,11 @@ class Job extends PhpJob
 
     private ?int $attempts;
 
+    public function __construct(mixed $payload)
+    {
+        parent::__construct(json_decode($payload, true));
+    }
+
     public function getName(): ?string
     {
         return $this->name;
