@@ -57,7 +57,7 @@ class JobQueueConfig
     {
         $jobQueueWorkerUrl = $this->config['queues'][$queue]['worker_url'] ?? null;
 
-        if ($jobQueueWorkerUrl) {
+        if (! $jobQueueWorkerUrl) {
             throw new ShipmateException(
                 "No worker url found for queue `{$queue}` on the Shipmate connection in the `config/queue.php` file."
             );
